@@ -18,7 +18,7 @@ RSpec.describe Txn, type: :model do
         name: "Installment",
         product_uuid: 1,
         debits: { accounts_receivable: 1000 },
-        credits: { interest_income: 5000 }
+        credits: { interest_income: 5000 },
       )
 
       txn.valid?
@@ -30,7 +30,7 @@ RSpec.describe Txn, type: :model do
         name: "Installment",
         product_uuid: 1,
         debits: { accounts_receivable: 2000 },
-        credits: { interest_income: 2000 }
+        credits: { interest_income: 2000 },
       )
 
       txn.valid?
@@ -43,7 +43,7 @@ RSpec.describe Txn, type: :model do
       name: "Installment",
       product_uuid: 1,
       debits: { accounts_receivable: 3000 },
-      credits: { interest_income: 2000, loans: 1000  }
+      credits: { interest_income: 2000, loans: 1000 },
     )
 
     expect(txn.debits.length).to eq 1
