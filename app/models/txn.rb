@@ -6,7 +6,7 @@ class Txn < ActiveRecord::Base
   attr_accessor :product_uuid
 
   validates :name, presence: true
-  validate :balanced?
+  validate :debits_equal_credits
 
   %w[debits credits].each do |entry_type|
     define_method("#{entry_type}=") do |hash|
@@ -23,9 +23,14 @@ class Txn < ActiveRecord::Base
 
   private
 
-  def balanced?
-    unless debits.map(&:amount_cents).reduce(:+) == credits.map(&:amount_cents).reduce(:+)
-      errors.add(:base, "debits and credits must balance")
+  def debits_equal_credits
+    unless balanced?
+      errors.add(:base, I18n.t('txn.errors.unbalanced'))
     end
+  end
+
+  def balanced?
+    debits.map(&:amount_cents).reduce(:+) ==
+      credits.map(&:amount_cents).reduce(:+)
   end
 end
