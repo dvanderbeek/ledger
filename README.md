@@ -19,8 +19,8 @@ After setting up, you can run the application using [foreman]:
 
 [foreman]: http://ddollar.github.io/foreman/
 
-Transactions
-------------
+Basic Usage
+-----------
 
 ```ruby
 Txn.create(name: "Installment", product_uuid: 1, debits: { accounts_receivable: 2000 }, credits: { interest_income: 1000, loans: 1000 })
@@ -31,13 +31,13 @@ Account.named(:interest_income).balance(product_uuid: 1) # Interest income from 
 Account.named(:interest_income).balance # Total interest income
 ```
 
-Usage
------
+Client
+------
 
-* In **client app**:
-  * Set up necessary accounts
-  * Add interactors with Debit and Credit logic for Transactions:
-  `BookIntsallment.new().process(product_uuid: 1, amount_cents: 2000, interest_cents: 1000)` translates to `Txn.create(name: "Installment", product_uuid: 1, debits: { accounts_receivable: 2000 }, credits: { interest_income: 1000, loans: 1000 })`
+* Set up necessary accounts
+* Add interactors with Debit and Credit logic for Transactions:
+
+  `BookIntsallment.new().process(product_uuid: 1, amount_cents: 2000, interest_cents: 1000)`
 
 Guidelines
 ----------
