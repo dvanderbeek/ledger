@@ -39,9 +39,13 @@ Account.named(:interest_income).credits.for_product(1).as_of(1.year.ago).sum(:am
 To Do
 -----
 
-[ ] Convert to Sinatra Service
+[x] Add Txn specs
 
-[ ] Add tests
+[ ] Add Entry specs
+
+[ ] Add Account specs
+
+[ ] Convert to Sinatra Service
 
 Client
 ------
