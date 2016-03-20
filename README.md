@@ -34,8 +34,9 @@ Account.named(:interest_income).balance # Total interest income
 To Do
 -----
 
-[] Convert to Sinatra Service
-[] Add tests
+[ ] Convert to Sinatra Service
+
+[ ] Add tests
 
 Client
 ------
