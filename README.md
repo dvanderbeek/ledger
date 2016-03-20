@@ -31,6 +31,12 @@ Account.named(:interest_income).balance(product_uuid: 1) # Interest income from 
 Account.named(:interest_income).balance # Total interest income
 ```
 
+To Do
+-----
+
+[] Convert to Sinatra Service
+[] Add tests
+
 Client
 ------
 
