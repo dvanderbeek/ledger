@@ -14,24 +14,14 @@ RSpec.describe Txn, type: :model do
     it { is_expected.to validate_presence_of(:name) }
 
     it "is invalid with mismatching debits and credits" do
-      txn = Txn.new(
-        name: "Installment",
-        product_uuid: 1,
-        debits: { accounts_receivable: 1000 },
-        credits: { interest_income: 5000 },
-      )
+      txn = build_stubbed(:txn, credits: { interest_income: 100 })
 
       txn.valid?
       expect(txn.errors[:base]).to include(I18n.t('txn.errors.unbalanced'))
     end
 
     it "is valid with matching debits and credits" do
-      txn = Txn.new(
-        name: "Installment",
-        product_uuid: 1,
-        debits: { accounts_receivable: 2000 },
-        credits: { interest_income: 2000 },
-      )
+      txn = build_stubbed(:txn)
 
       txn.valid?
       expect(txn.errors[:base]).not_to include(I18n.t('txn.errors.unbalanced'))
@@ -39,9 +29,7 @@ RSpec.describe Txn, type: :model do
   end
 
   it "sets up Debits and Credits" do
-    txn = Txn.new(
-      name: "Installment",
-      product_uuid: 1,
+    txn = build_stubbed(:txn,
       debits: { accounts_receivable: 3000 },
       credits: { interest_income: 2000, loans: 1000 },
     )

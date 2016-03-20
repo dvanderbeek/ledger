@@ -19,8 +19,11 @@ RSpec.describe Entry, type: :model do
 
   describe ".for_product" do
     it "returns the correct records" do
-      entry_1 = create(:entry, product_uuid: 1)
-      entry_2 = create(:entry, product_uuid: 2)
+      entry_1 = Entry.new(product_uuid: 1)
+      entry_2 = Entry.new(product_uuid: 2)
+      entry_1.save(validate: false)
+      entry_2.save(validate: false)
+
       query = Entry.for_product(1)
 
       expect(query).to include(entry_1)
@@ -30,12 +33,15 @@ RSpec.describe Entry, type: :model do
 
   describe ".as_of" do
     it "returns the correct records" do
-      old_entry = create(:entry, date: 1.year.ago)
-      new_entry = create(:entry, date: Date.current)
+      entry_1 = Entry.new(date: 1.year.ago)
+      entry_2 = Entry.new(date: Date.current)
+      entry_1.save(validate: false)
+      entry_2.save(validate: false)
+
       query = Entry.as_of(Date.yesterday)
 
-      expect(query).to include(old_entry)
-      expect(query).not_to include(new_entry)
+      expect(query).to include(entry_1)
+      expect(query).not_to include(entry_2)
     end
   end
 
