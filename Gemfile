@@ -49,6 +49,7 @@ group :test do
   gem 'shoulda-matchers', '~> 3.0', require: false
   gem 'timecop'
   gem 'guard-rspec'
+  gem 'simplecov', require: false
 end
 
 group :staging, :production do
