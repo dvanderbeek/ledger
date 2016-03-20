@@ -21,14 +21,11 @@ RSpec.describe Txn, type: :model do
         credits: { interest_income: 5000 }
       )
 
-      expect(txn).not_to be_valid
+      txn.valid?
       expect(txn.errors[:base]).to include(I18n.t('txn.errors.unbalanced'))
     end
 
     it "is valid with matching debits and credits" do
-      Asset.create(name: :accounts_receivable)
-      Revenue.create(name: :interest_income)
-
       txn = Txn.new(
         name: "Installment",
         product_uuid: 1,
@@ -36,14 +33,12 @@ RSpec.describe Txn, type: :model do
         credits: { interest_income: 2000 }
       )
 
-      expect(txn).to be_valid
+      txn.valid?
+      expect(txn.errors[:base]).not_to include(I18n.t('txn.errors.unbalanced'))
     end
   end
 
   it "sets up Debits and Credits" do
-    Asset.create(name: :accounts_receivable)
-    Revenue.create(name: :interest_income)
-
     txn = Txn.new(
       name: "Installment",
       product_uuid: 1,
