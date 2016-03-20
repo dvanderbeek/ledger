@@ -42,11 +42,11 @@ RSpec.describe Txn, type: :model do
     txn = Txn.new(
       name: "Installment",
       product_uuid: 1,
-      debits: { accounts_receivable: 2000 },
-      credits: { interest_income: 2000 }
+      debits: { accounts_receivable: 3000 },
+      credits: { interest_income: 2000, loans: 1000  }
     )
 
     expect(txn.debits.length).to eq 1
-    expect(txn.credits.length).to eq 1
+    expect(txn.credits.length).to eq 2
   end
 end
