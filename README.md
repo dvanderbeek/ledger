@@ -22,6 +22,8 @@ After setting up, you can run the application using [foreman]:
 Basic Usage
 -----------
 
+Create `Txns` with equal `Debits` and `Credits`. `Txn` has its name because "Transaction" is a reserved word.
+
 ```ruby
 Txn.create(name: "Installment", product_uuid: 1, debits: { accounts_receivable: 2000 }, credits: { interest_income: 1000, loans: 1000 })
 Txn.create(name: "Process Payment", product_uuid: 1, debits: { cash: 2000 }, credits: { accounts_receivable: 2000 })
