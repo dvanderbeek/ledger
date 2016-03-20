@@ -3,7 +3,7 @@ class Txn < ActiveRecord::Base
   has_many :debits
   has_many :credits
 
-  attr_accessor :product_uuid
+  attr_accessor :date, :product_uuid
 
   validates :name, presence: true
   validate :debits_equal_credits
@@ -13,6 +13,7 @@ class Txn < ActiveRecord::Base
       hash.each do |key, value|
         self.send(entry_type).new(
           txn: self,
+          date: self.date || Date.current,
           account_name: key,
           amount_cents: value,
           product_uuid: product_uuid,
