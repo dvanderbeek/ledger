@@ -363,7 +363,7 @@ DEPENDENCIES
   recipient_interceptor
   rspec-rails (~> 3.0)
   sass-rails (~> 4.0.3)
-  shoulda-matchers
+  shoulda-matchers (~> 3.0)
   sidekiq
   simple_form!
   sinatra
