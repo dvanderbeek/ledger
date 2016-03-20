@@ -13,7 +13,7 @@ class Txn < ActiveRecord::Base
       hash.each do |key, value|
         self.send(entry_type).new(
           txn: self,
-          date: self.date || Date.current,
+          date: self.date,
           account_name: key,
           amount_cents: value,
           product_uuid: product_uuid,

@@ -13,6 +13,10 @@ RSpec.describe Entry, type: :model do
     it { is_expected.to validate_presence_of(:amount_cents) }
   end
 
+  it "has a default date" do
+    expect(Entry.new.date).to eq Date.current
+  end
+
   describe ".for_product" do
     it "returns the correct records" do
       entry_1 = create(:entry, product_uuid: 1)
