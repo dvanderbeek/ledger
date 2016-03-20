@@ -31,6 +31,9 @@ Txn.create(name: "Process Payment", product_uuid: 1, debits: { cash: 2000 }, cre
 Account.named(:interest_income).balance(product_uuid: 1) # Interest income from Loan 1
 Account.named(:interest_income).balance # Total interest income
 Account.named(:interest_income).balance(as_of: Date.yesterday) # Total interest income as of a point in time
+
+Account.named(:interest_income).credits.for_product(1).as_of(1.year.ago) # All credits to the interest_income account for Loan 1 as of a year ago
+Account.named(:interest_income).credits.for_product(1).as_of(1.year.ago).sum(:amount_cents) # Total amount of those credits
 ```
 
 To Do
