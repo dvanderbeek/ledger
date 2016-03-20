@@ -15,7 +15,7 @@ class Txn < ActiveRecord::Base
           txn: self,
           account_name: key,
           amount_cents: value,
-          product_uuid: product_uuid
+          product_uuid: product_uuid,
         )
       end
     end
