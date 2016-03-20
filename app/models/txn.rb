@@ -24,9 +24,7 @@ class Txn < ActiveRecord::Base
   private
 
   def debits_equal_credits
-    unless balanced?
-      errors.add(:base, I18n.t('txn.errors.unbalanced'))
-    end
+    errors.add(:base, I18n.t('txn.errors.unbalanced')) unless balanced?
   end
 
   def balanced?
