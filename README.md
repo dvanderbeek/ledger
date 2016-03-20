@@ -24,7 +24,6 @@ Basic Usage
 
 ```ruby
 Txn.create(name: "Installment", product_uuid: 1, debits: { accounts_receivable: 2000 }, credits: { interest_income: 1000, loans: 1000 })
-
 Txn.create(name: "Process Payment", product_uuid: 1, debits: { cash: 2000 }, credits: { accounts_receivable: 2000 })
 
 Account.named(:interest_income).balance(product_uuid: 1) # Interest income from Loan 1
