@@ -12,7 +12,7 @@ RSpec.describe Entry, type: :model do
     it { is_expected.to validate_presence_of(:txn) }
     it { is_expected.to validate_presence_of(:amount_cents) }
 
-    it "can't have a date in the future" do
+    it "does not allow future dates" do
       entry = Entry.new(date: Date.current + 1.day)
       expect(entry).not_to be_valid
       expect(entry.errors[:date]).to include I18n.t('entry.errors.date_in_future')
