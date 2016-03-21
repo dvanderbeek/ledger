@@ -92,9 +92,11 @@ Client
 ------
 
 * Set up necessary accounts
-* Add interactors with Debit and Credit logic for Transactions:
+* Add Event interactors with logic for creating a Txn:
 
   `BookIntsallment.new().process(product_uuid: 1, amount_cents: 2000, interest_cents: 1000)`
+
+* Txn should store event_id so adjustments can be grouped with original Txn.
 
 Guidelines
 ----------
