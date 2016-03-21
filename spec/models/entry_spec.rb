@@ -50,13 +50,4 @@ RSpec.describe Entry, type: :model do
       expect(query).not_to include(entry_2)
     end
   end
-
-  describe "#account_name=" do
-    it "sets the account when given a name" do
-      account = create(:account)
-      entry = Entry.new(account_name: account.name)
-
-      expect(entry.account).to eq account
-    end
-  end
 end

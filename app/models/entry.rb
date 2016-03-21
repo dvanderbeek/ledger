@@ -10,10 +10,6 @@ class Entry < ActiveRecord::Base
   scope :for_product, -> (uuid) { uuid.present? ? where(product_uuid: uuid) : all }
   scope :as_of, -> (date) { where("date <= ?", date) }
 
-  def account_name=(name)
-    self.account = Account.find_by(name: name) if name
-  end
-
   private
 
   def date_cannot_be_in_the_future

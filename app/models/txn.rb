@@ -14,7 +14,7 @@ class Txn < ActiveRecord::Base
         self.send(entry_type).new(
           txn: self,
           date: self.date,
-          account_name: key,
+          account: Account.find_by(name: key),
           amount_cents: value,
           product_uuid: product_uuid,
         )
