@@ -71,12 +71,13 @@ Txn.create(
   credits: { accounts_receivable: 2000 },
 )
 
-Account.named(:interest_income).balance(product_uuid: 1) # Interest income from Loan 1
-Account.named(:interest_income).balance # Total interest income
-Account.named(:interest_income).balance(as_of: Date.yesterday) # Total interest income as of a point in time
-
-Account.named(:interest_income).credits.for_product(1).as_of(1.year.ago) # All credits to the interest_income account for Loan 1 as of a year ago
-Account.named(:interest_income).credits.for_product(1).as_of(1.year.ago).sum(:amount_cents) # Total amount of those credits
+account = Account.named(:interest_income)
+account.balance
+account.balance(product_uuid: 1)
+account.balance(as_of: Date.yesterday)
+account.debits.for_product(1).as_of(1.year.ago)
+account.credits.for_product(1).as_of(1.year.ago)
+account.credits.for_product(1).as_of(1.year.ago).sum(:amount_cents)
 ```
 
 To Do
