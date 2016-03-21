@@ -31,7 +31,7 @@ RSpec.describe Txn, type: :model do
   it "sets up Debits and Credits" do
     txn = build_stubbed(:txn,
       debits: { accounts_receivable: 3000 },
-      credits: { interest_income: 2000, loans: 1000 },
+      credits: { interest_income: 2000, principal: 1000 },
     )
 
     expect(txn.debits.length).to eq 1

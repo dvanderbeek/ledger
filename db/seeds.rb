@@ -2,7 +2,7 @@ Accounts::Asset.create([
   { name: :accrued_interest },
   { name: :accounts_receivable },
   { name: :cash },
-  { name: :loans },
+  { name: :principal },
 ])
 
 Accounts::Revenue.create([

@@ -36,7 +36,7 @@ Txn.create(
   name: "Issue Loan",
   product_uuid: 1,
   date: 35.days.ago,
-  debits: { loans: 200000 },
+  debits: { principal: 200000 },
   credits: { cash: 200000 },
 )
 
@@ -53,13 +53,13 @@ end
 
 int = Account.named(:accrued_interest).balance(product_uuid: 1, as_of: 4.days.ago)
 Txn.create(
-  name: "Installment",
+  name: "Book Installment",
   product_uuid: 1,
   date: 4.days.ago,
   debits: { accounts_receivable: 2000 },
   credits: {
     accrued_interest: int,
-    loans: 2000 - int,
+    principal: 2000 - int,
   },
 )
 
