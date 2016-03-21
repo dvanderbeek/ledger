@@ -25,8 +25,51 @@ Basic Usage
 Create `Txns` with equal `Debits` and `Credits`. `Txn` has its name because "Transaction" is a reserved word.
 
 ```ruby
-Txn.create(name: "Installment", product_uuid: 1, debits: { accounts_receivable: 2000 }, credits: { interest_income: 1000, loans: 1000 })
-Txn.create(name: "Process Payment", product_uuid: 1, debits: { cash: 2000 }, credits: { accounts_receivable: 2000 })
+Txn.create(
+  name: "Initial Funding",
+  date: 40.days.ago,
+  debits: { cash: 100000000 },
+  credits: { equity: 100000000 },
+)
+
+Txn.create(
+  name: "Issue Loan",
+  product_uuid: 1,
+  date: 35.days.ago,
+  debits: { loans: 200000 },
+  credits: { cash: 200000 },
+)
+
+# Every day
+(0..34).each do |n|
+  Txn.create(
+    name: "Book Interest",
+    product_uuid: 1,
+    date: Date.current - n.days,
+    debits: { interest_receivable: 50 },
+    credits: { interest_income: 50 },
+  )
+end
+
+int = Account.named(:interest_receivable).balance(product_uuid: 1, as_of: 4.days.ago)
+Txn.create(
+  name: "Installment",
+  product_uuid: 1,
+  date: 4.days.ago,
+  debits: { accounts_receivable: 2000 },
+  credits: {
+    interest_receivable: int,
+    loans: 2000 - int,
+  },
+)
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 1,
+  date: 2.days.ago,
+  debits: { cash: 2000 },
+  credits: { accounts_receivable: 2000 },
+)
 
 Account.named(:interest_income).balance(product_uuid: 1) # Interest income from Loan 1
 Account.named(:interest_income).balance # Total interest income
