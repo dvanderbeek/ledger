@@ -1,14 +1,14 @@
-Asset.create([
+Accounts::Asset.create([
   { name: :accrued_interest },
   { name: :accounts_receivable },
   { name: :cash },
   { name: :loans },
 ])
 
-Revenue.create([
+Accounts::Revenue.create([
   { name: :interest_income },
 ])
 
-Equity.create([
+Accounts::Equity.create([
   { name: :equity },
 ])
