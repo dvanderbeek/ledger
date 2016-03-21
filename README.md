@@ -74,7 +74,7 @@ Txn.create(
 account = Account.named(:interest_income)
 account.balance
 account.balance(product_uuid: 1)
-account.balance(as_of: Date.yesterday)
+account.balance(product_uuid: 1, as_of: Date.yesterday)
 account.debits.for_product(1).as_of(1.year.ago)
 account.credits.for_product(1).as_of(1.year.ago)
 account.credits.for_product(1).as_of(1.year.ago).sum(:amount_cents)
