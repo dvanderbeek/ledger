@@ -1,5 +1,5 @@
 Asset.create([
-  { name: :interest_receivable },
+  { name: :accrued_interest },
   { name: :accounts_receivable },
   { name: :cash },
   { name: :loans },
@@ -9,4 +9,6 @@ Revenue.create([
   { name: :interest_income },
 ])
 
-Equity.create(name: :equity)
+Equity.create([
+  { name: :equity },
+])

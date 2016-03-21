@@ -46,19 +46,19 @@ Txn.create(
     name: "Book Interest",
     product_uuid: 1,
     date: Date.current - n.days,
-    debits: { interest_receivable: 50 },
+    debits: { accrued_interest: 50 },
     credits: { interest_income: 50 },
   )
 end
 
-int = Account.named(:interest_receivable).balance(product_uuid: 1, as_of: 4.days.ago)
+int = Account.named(:accrued_interest).balance(product_uuid: 1, as_of: 4.days.ago)
 Txn.create(
   name: "Installment",
   product_uuid: 1,
   date: 4.days.ago,
   debits: { accounts_receivable: 2000 },
   credits: {
-    interest_receivable: int,
+    accrued_interest: int,
     loans: 2000 - int,
   },
 )
@@ -82,7 +82,7 @@ Account.named(:interest_income).credits.for_product(1).as_of(1.year.ago).sum(:am
 To Do
 -----
 
-[ ] Change Entry.date to timestamp
+[ ] Change Entry.date to timestamp?
 
 [ ] Convert to Sinatra Service
 
