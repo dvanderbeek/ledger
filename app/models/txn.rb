@@ -1,7 +1,7 @@
 class Txn < ActiveRecord::Base
   has_many :entries
-  has_many :debits
-  has_many :credits
+  has_many :debits, class_name: Entries::Debit
+  has_many :credits, class_name: Entries::Credit
 
   attr_accessor :date, :product_uuid
 

@@ -1,2 +1,0 @@
-class Debit < Entry
-end
