@@ -40,7 +40,6 @@ Txn.create(
   credits: { cash: 200000 },
 )
 
-# Every day
 (0..34).each do |n|
   Txn.create(
     name: "Book Interest",
