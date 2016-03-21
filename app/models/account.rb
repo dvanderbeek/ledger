@@ -3,7 +3,7 @@ class Account < ActiveRecord::Base
   has_many :debits
   has_many :credits
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: true
 
   def self.named(name)
     find_by(name: name)
