@@ -86,6 +86,8 @@ To Do
 
 [ ] Convert to Sinatra Service
 
+[ ] 500k 60 month loans would create ~1.8B Book Interest rows - probably need to shard the database
+
 Client
 ------
 
