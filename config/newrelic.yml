@@ -1,5 +1,5 @@
 common: &default_settings
-  app_name: 'accountant'
+  app_name: 'ledger'
   audit_log:
     enabled: false
   browser_monitoring:
@@ -30,5 +30,5 @@ production:
   monitor_mode: true
 staging:
   <<: *default_settings
-  app_name: 'accountant (Staging)'
+  app_name: 'ledger (Staging)'
   monitor_mode: true

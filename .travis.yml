@@ -5,9 +5,9 @@ before_install:
   - sh -e /etc/init.d/xvfb start
 before_script:
   - cp .sample.env .env
-  
-  - psql -c 'create database "accountant_test";' -U postgres
-  
+
+  - psql -c 'create database "ledger_test";' -U postgres
+
 branches:
   only:
     - master

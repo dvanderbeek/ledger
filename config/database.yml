@@ -1,6 +1,6 @@
 development: &default
   adapter: postgresql
-  database: accountant_development
+  database: ledger_development
   encoding: utf8
   host: localhost
   min_messages: warning
@@ -9,13 +9,13 @@ development: &default
 
 test:
   <<: *default
-  database: accountant_test
+  database: ledger_test
 
 production:
   adapter: postgresql
   encoding: unicode
   host: localhost
-  database: accountant_production
+  database: ledger_production
   pool: 5
-  username: accountant
+  username: ledger
   password: <%= ENV['DB_PASS'] %>

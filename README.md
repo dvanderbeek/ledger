@@ -1,5 +1,5 @@
-Accountant
-==========
+Ledger
+======
 
 Getting Started
 ---------------
