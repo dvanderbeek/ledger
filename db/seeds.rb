@@ -87,7 +87,8 @@ Txn.create(
 )
 
 # If payment is processed before it returns, we'd
-#   also need to reverse the process payment Txn
+#   also need to reverse the process payment Txn.
+#   Date = date of Txn this is reversing (Initiate Payment).
 Txn.create(
   name: "Payment Return",
   product_uuid: 2,
