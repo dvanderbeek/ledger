@@ -1,5 +1,5 @@
 class Txn < ActiveRecord::Base
-  has_many :entries
+  has_many :entries, dependent: :destroy
   has_many :debits, class_name: Entries::Debit
   has_many :credits, class_name: Entries::Credit
 
