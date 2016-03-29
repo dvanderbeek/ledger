@@ -105,3 +105,12 @@ Txn.create(
   debits: { principal_receivable: 7500 },
   credits: { principal: 7500 },
 )
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 2,
+  # TODO: credit should be on 2015-5-1 (installment booked) and debit on 2015-5-3 (cash received)
+  date: Date.new(2015, 5, 3),
+  debits: { cash: 7500 },
+  credits: { principal_receivable: 7500 },
+)
