@@ -50,7 +50,7 @@ Txn.create(
   )
 end
 
-int = Account.named(:accrued_interest).balance(product_uuid: 1, as_of: 4.days.ago)
+int = Account.named(:accrued_interest).balance(for_product: 1, as_of: 4.days.ago)
 Txn.create(
   name: "Book Installment",
   product_uuid: 1,
@@ -86,8 +86,8 @@ Txn.create(
 
 account = Account.named(:interest_income)
 account.balance
-account.balance(product_uuid: 1)
-account.balance(product_uuid: 1, as_of: Date.yesterday)
+account.balance(for_product: 1)
+account.balance(for_product: 1, as_of: Date.yesterday)
 account.debits.for_product(1).as_of(1.year.ago)
 account.credits.for_product(1).as_of(1.year.ago)
 account.credits.for_product(1).as_of(1.year.ago).sum(:amount_cents)
