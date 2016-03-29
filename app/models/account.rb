@@ -8,4 +8,8 @@ class Account < ActiveRecord::Base
   def self.named(name)
     find_by(name: name)
   end
+
+  def self.method_missing(method, *args, &block)
+    named(method)
+  end
 end

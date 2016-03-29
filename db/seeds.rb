@@ -2,6 +2,7 @@ Accounts::Asset.create([
   { name: :accrued_interest },
   { name: :principal_receivable },
   { name: :interest_receivable },
+  { name: :pending_payments },
   { name: :cash },
   { name: :principal },
 ])
@@ -13,11 +14,6 @@ Accounts::Revenue.create([
 Accounts::Equity.create([
   { name: :equity },
 ])
-
-Accounts::Liability.create([
-  { name: :unearned_cash },
-])
-
 
 Txn.create(
   name: "Initial Funding",
@@ -83,19 +79,21 @@ Txn.create(
 )
 
 Txn.create(
-  name: "Process Payment",
+  name: "Initiate Payment",
   product_uuid: 2,
   date: Date.new(2015, 4, 1),
-  debits: { cash: 7500 },
+  debits: { pending_payments: 7500 },
   credits: { principal_receivable: 7500 },
 )
 
+# If payment is processed before it returns, we'd
+#   also need to reverse the process payment Txn
 Txn.create(
   name: "Payment Return",
   product_uuid: 2,
   date: Date.new(2015, 4, 1),
   debits: { principal_receivable: 7500 },
-  credits: { cash: 7500 },
+  credits: { pending_payments: 7500 },
 )
 
 Txn.create(
@@ -107,10 +105,17 @@ Txn.create(
 )
 
 Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 2,
+  date: Date.new(2015, 5, 1),
+  debits: { pending_payments: 7500 },
+  credits: { principal_receivable: 7500 },
+)
+
+Txn.create(
   name: "Process Payment",
   product_uuid: 2,
-  # TODO: credit should be on 2015-5-1 (installment booked) and debit on 2015-5-3 (cash received)
   date: Date.new(2015, 5, 3),
   debits: { cash: 7500 },
-  credits: { principal_receivable: 7500 },
+  credits: { pending_payments: 7500 },
 )
