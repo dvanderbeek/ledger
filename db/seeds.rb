@@ -1,6 +1,7 @@
 Accounts::Asset.create([
   { name: :accrued_interest },
-  { name: :accounts_receivable },
+  { name: :principal_receivable },
+  { name: :interest_receivable },
   { name: :cash },
   { name: :principal },
 ])
@@ -37,7 +38,7 @@ Txn.create(
   name: "Book Installment",
   product_uuid: 2,
   date: Date.new(2015, 1, 1),
-  debits: { accounts_receivable: 10000 },
+  debits: { principal_receivable: 10000 },
   credits: { principal: 10000 },
 )
 
@@ -46,7 +47,7 @@ Txn.create(
   product_uuid: 2,
   date: Date.new(2015, 1, 1),
   debits: { principal: 10000 },
-  credits: { accounts_receivable: 10000 },
+  credits: { principal_receivable: 10000 },
 )
 
 Txn.create(
@@ -61,7 +62,7 @@ Txn.create(
   name: "Book Installment",
   product_uuid: 2,
   date: Date.new(2015, 2, 1),
-  debits: { accounts_receivable: 0 },
+  debits: { principal_receivable: 0 },
   credits: { principal: 0 },
 )
 
@@ -69,7 +70,7 @@ Txn.create(
   name: "Book Installment",
   product_uuid: 2,
   date: Date.new(2015, 3, 1),
-  debits: { accounts_receivable: 0 },
+  debits: { principal_receivable: 0 },
   credits: { principal: 0 },
 )
 
@@ -77,6 +78,30 @@ Txn.create(
   name: "Book Installment",
   product_uuid: 2,
   date: Date.new(2015, 4, 1),
-  debits: { accounts_receivable: 7500 },
+  debits: { principal_receivable: 7500 },
+  credits: { principal: 7500 },
+)
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 2,
+  date: Date.new(2015, 4, 1),
+  debits: { cash: 7500 },
+  credits: { principal_receivable: 7500 },
+)
+
+Txn.create(
+  name: "Payment Return",
+  product_uuid: 2,
+  date: Date.new(2015, 4, 1),
+  debits: { principal_receivable: 7500 },
+  credits: { cash: 7500 },
+)
+
+Txn.create(
+  name: "Book Installment",
+  product_uuid: 2,
+  date: Date.new(2015, 5, 1),
+  debits: { principal_receivable: 7500 },
   credits: { principal: 7500 },
 )
