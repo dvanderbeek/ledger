@@ -55,7 +55,10 @@ Txn.create(
   name: "Book Installment",
   product_uuid: 1,
   date: 4.days.ago,
-  debits: { accounts_receivable: 2000 },
+  debits: {
+    interest_receivable: int,
+    principal_receivable: 2000 - int,
+  },
   credits: {
     accrued_interest: int,
     principal: 2000 - int,
@@ -63,11 +66,22 @@ Txn.create(
 )
 
 Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 1,
+  date: 4.days.ago,
+  debits: { pending_payments: 2000 },
+  credits: {
+    interest_receivable: int,
+    principal_receivable: 2000-int,
+  }
+)
+
+Txn.create(
   name: "Process Payment",
   product_uuid: 1,
   date: 2.days.ago,
   debits: { cash: 2000 },
-  credits: { accounts_receivable: 2000 },
+  credits: { pending_payments: 2000 },
 )
 
 account = Account.named(:interest_income)
