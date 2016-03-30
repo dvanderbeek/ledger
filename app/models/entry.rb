@@ -10,6 +10,13 @@ class Entry < ActiveRecord::Base
   scope :for_product, -> (uuid) { uuid.present? ? where(product_uuid: uuid) : all }
   scope :as_of, -> (date) { where("date <= ?", date) }
 
+  def self.amounts_by_day(start_date:, end_date: Date.current, for_product: nil)
+    entries = for_product(for_product).where(date: start_date..end_date).group(:date).select("date, sum(amount_cents) as total_amount")
+    entries.each_with_object({}) do |entry, amounts|
+      amounts[entry.date] = entry.total_amount
+    end
+  end
+
   private
 
   def date_cannot_be_in_the_future
