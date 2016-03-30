@@ -101,6 +101,8 @@ Account.accrued_interest.daily_balance(date_range: Date.new(2015, 1, 1)..Date.ne
 To Do
 -----
 
+[ ] Store date and product uuid on Txn also for querying
+
 [ ] Change Entry.date to timestamp?
 
 [ ] Convert to Sinatra Service
