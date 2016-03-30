@@ -28,12 +28,13 @@ class Account < ActiveRecord::Base
   end
 
   def daily_balance(date_range:, for_product: nil)
-    increasing_entries_by_day = increasing_entries.amounts_by_day(start_date: date_range.first, end_date: date_range.last, for_product: for_product)
-    decreasing_entries_by_day = decreasing_entries.amounts_by_day(start_date: date_range.first, end_date: date_range.last, for_product: for_product)
+    args = { start_date: date_range.first, end_date: date_range.last, for_product: for_product }
+    increasing_entries_by_day = increasing_entries.amounts_by_day(args)
+    decreasing_entries_by_day = decreasing_entries.amounts_by_day(args)
     starting_balance = persisted_balance(as_of: date_range.first - 1.day, for_product: for_product)
     date_range.each_with_object({}) do |date, balances|
       balances[date] = (
-        starting_balance + 
+        starting_balance +
         increasing_entries_by_day.fetch(date, 0) -
         decreasing_entries_by_day.fetch(date, 0)
       ).to_f
