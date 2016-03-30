@@ -34,8 +34,8 @@ class Account < ActiveRecord::Base
     date_range.each_with_object({}) do |date, balances|
       balances[date] = (
         starting_balance + 
-        (increasing_entries_by_day[date] || 0) -
-        (decreasing_entries_by_day[date] || 0)
+        increasing_entries_by_day.fetch(date, 0) -
+        decreasing_entries_by_day.fetch(date, 0)
       ).to_f
       starting_balance = balances[date]
     end
