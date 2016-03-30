@@ -27,7 +27,7 @@ Create `Txns` with equal `Debits` and `Credits`. `Txn` has its name because "Tra
 ```ruby
 Txn.create(
   name: "Initial Funding",
-  date: 40.days.ago,
+  date: Date.new(2014, 12, 1),
   debits: { cash: 100000000 },
   credits: { equity: 100000000 },
 )
@@ -35,53 +35,56 @@ Txn.create(
 Txn.create(
   name: "Issue Loan",
   product_uuid: 1,
-  date: 35.days.ago,
+  date: Date.new(2015, 1, 1),
   debits: { principal: 200000 },
   credits: { cash: 200000 },
 )
 
-(0..34).each do |n|
+(Date.new(2015, 1, 2)..Date.new(2015, 2, 15)).each do |date|
   Txn.create(
     name: "Book Interest",
     product_uuid: 1,
-    date: Date.current - n.days,
+    date: date,
     debits: { accrued_interest: 50 },
     credits: { interest_income: 50 },
   )
 end
 
-int = Account.named(:accrued_interest).balance(for_product: 1, as_of: 4.days.ago)
+payment_date = Date.new(2015, 2, 1)
+payment = 2000.to_d
+interest = Account.named(:accrued_interest).balance(for_product: 1, as_of: payment_date)
+principal = payment - interest
 Txn.create(
   name: "Book Installment",
   product_uuid: 1,
-  date: 4.days.ago,
+  date: payment_date,
   debits: {
-    interest_receivable: int,
-    principal_receivable: 2000 - int,
+    interest_receivable: interest,
+    principal_receivable: principal,
   },
   credits: {
-    accrued_interest: int,
-    principal: 2000 - int,
+    accrued_interest: interest,
+    principal: principal,
   },
 )
 
 Txn.create(
   name: "Initiate Payment",
   product_uuid: 1,
-  date: 4.days.ago,
-  debits: { pending_payments: 2000 },
+  date: payment_date,
+  debits: { pending_payments: payment },
   credits: {
-    interest_receivable: int,
-    principal_receivable: 2000-int,
+    interest_receivable: interest,
+    principal_receivable: principal,
   }
 )
 
 Txn.create(
   name: "Process Payment",
   product_uuid: 1,
-  date: 2.days.ago,
-  debits: { cash: 2000 },
-  credits: { pending_payments: 2000 },
+  date: payment_date + 2.days,
+  debits: { cash: payment },
+  credits: { pending_payments: payment },
 )
 
 account = Account.named(:interest_income)
@@ -91,6 +94,8 @@ account.balance(for_product: 1, as_of: Date.yesterday)
 account.debits.for_product(1).as_of(1.year.ago)
 account.credits.for_product(1).as_of(1.year.ago)
 account.credits.for_product(1).as_of(1.year.ago).sum(:amount_cents)
+
+Account.accrued_interest.daily_balance(date_range: Date.new(2015, 1, 1)..Date.new(2015, 2, 5), for_product: 1)
 ```
 
 To Do
