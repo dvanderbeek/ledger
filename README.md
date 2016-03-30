@@ -52,7 +52,7 @@ end
 
 payment_date = Date.new(2015, 2, 1)
 payment = 2000.to_d
-interest = Account.named(:accrued_interest).balance(for_product: 1, as_of: payment_date)
+interest = Account.accrued_interest.balance(for_product: 1, as_of: payment_date)
 principal = payment - interest
 
 Txn.create(
@@ -88,7 +88,7 @@ Txn.create(
   credits: { pending_payments: payment },
 )
 
-account = Account.named(:interest_income)
+account = Account.interest_income
 account.balance
 account.balance(for_product: 1)
 account.balance(for_product: 1, as_of: Date.yesterday)
@@ -96,11 +96,17 @@ account.debits.for_product(1).as_of(1.year.ago)
 account.credits.for_product(1).as_of(1.year.ago)
 account.credits.for_product(1).as_of(1.year.ago).sum(:amount_cents)
 
+# Payments processed by date
+Account.cash.debits.amounts_by_day(start_date: Date.new(2015, 1, 1), for_product: 1)
+# Daily balance of accrued interest
 Account.accrued_interest.daily_balance(date_range: Date.new(2015, 1, 1)..Date.new(2015, 2, 5), for_product: 1)
 ```
 
 To Do
 -----
+
+[ ] Cross-account balances (for example: interest_receivable + principal_receivable, principal + principal_receivable)
+      Maybe some sort of 'parent' or 'virtual' account concept to encapsulate this
 
 [ ] Store date and product uuid on Txn also for querying
 
