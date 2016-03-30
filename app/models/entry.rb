@@ -11,10 +11,17 @@ class Entry < ActiveRecord::Base
   scope :as_of, -> (date) { where("date <= ?", date) }
 
   def self.amounts_by_day(start_date:, end_date: Date.current, for_product: nil)
-    entries = for_product(for_product).where(date: start_date..end_date).group(:date).select("date, sum(amount_cents) as total_amount")
-    entries.each_with_object({}) do |entry, amounts|
-      amounts[entry.date] = entry.total_amount
-    end
+    by_date(start_date: start_date, end_date: end_date, for_product: for_product)
+      .each_with_object({}) do |entry, amounts|
+        amounts[entry.date] = entry.total_amount
+      end
+  end
+
+  def self.by_date(start_date:, end_date: Date.current, for_product: nil)
+    for_product(for_product).
+      where(date: start_date..end_date).
+      group(:date).
+      select("date, sum(amount_cents) as total_amount")
   end
 
   private

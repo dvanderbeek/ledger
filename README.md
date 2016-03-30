@@ -54,6 +54,7 @@ payment_date = Date.new(2015, 2, 1)
 payment = 2000.to_d
 interest = Account.named(:accrued_interest).balance(for_product: 1, as_of: payment_date)
 principal = payment - interest
+
 Txn.create(
   name: "Book Installment",
   product_uuid: 1,
