@@ -13,12 +13,30 @@ class Account < ActiveRecord::Base
     named(method)
   end
 
+  def balance(as_of: Date.current, for_product: nil)
+    (
+      increasing_entries.as_of(as_of).for_product(for_product).map(&:amount_cents).reduce(0, :+) -
+      decreasing_entries.as_of(as_of).for_product(for_product).map(&:amount_cents).reduce(0, :+)
+    ).to_f
+  end
+
+  def persisted_balance(as_of: Date.current, for_product: nil)
+    (
+      increasing_entries.as_of(as_of).for_product(for_product).sum(:amount_cents) -
+      decreasing_entries.as_of(as_of).for_product(for_product).sum(:amount_cents)
+    ).to_f
+  end
+
   def daily_balance(date_range:, for_product: nil)
-    credits_by_day = credits.amounts_by_day(start_date: date_range.first, end_date: date_range.last, for_product: for_product)
-    debits_by_day = debits.amounts_by_day(start_date: date_range.first, end_date: date_range.last, for_product: for_product)
+    increasing_entries_by_day = increasing_entries.amounts_by_day(start_date: date_range.first, end_date: date_range.last, for_product: for_product)
+    decreasing_entries_by_day = decreasing_entries.amounts_by_day(start_date: date_range.first, end_date: date_range.last, for_product: for_product)
     starting_balance = persisted_balance(as_of: date_range.first - 1.day, for_product: for_product)
     date_range.each_with_object({}) do |date, balances|
-      balances[date] = (starting_balance + balance_change(date, credits_by_day, debits_by_day)).to_f
+      balances[date] = (
+        starting_balance + 
+        (increasing_entries_by_day[date] || 0) -
+        (decreasing_entries_by_day[date] || 0)
+      ).to_f
       starting_balance = balances[date]
     end
   end

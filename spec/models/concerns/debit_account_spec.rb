@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-class StubDebitAccount; include DebitAccount; end
+class StubDebitAccount < Account; include DebitAccount; end
 
 RSpec.describe DebitAccount do
   it "calculates the correct account balance" do
