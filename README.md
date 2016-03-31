@@ -103,7 +103,7 @@ account.credits.for_product(1).as_of(1.year.ago)
 account.credits.for_product(1).as_of(1.year.ago).sum(:amount_cents)
 
 # Payments processed by date
-Account.cash.debits.amounts_by_day(start_date: Date.new(2015, 1, 1), for_product: 1)
+Account.cash.debits.for_product(1).by_day(:amount_cents)
 # Daily balance of accrued interest
 Account.accrued_interest.daily_balance(date_range: Date.new(2015, 1, 1)..Date.new(2015, 2, 5), for_product: 1)
 # Total balance for multiple accounts

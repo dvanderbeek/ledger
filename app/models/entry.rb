@@ -11,26 +11,33 @@ class Entry < ActiveRecord::Base
   scope :as_of, -> (date) { where("date <= ?", date) }
   scope :between, -> (date_range) { where(date: date_range) }
 
-  def self.net_credits_by_day
-    net_credits_by_date.each_with_object({}) do |entry, amounts|
-      amounts[entry.account_id] ||= {}
-      amounts[entry.account_id][entry.date] = entry.total_amount
+  QUERIES = {
+    net_credits: "CASE WHEN type = 'Entries::Credit' THEN amount_cents ELSE -amount_cents END",
+    amount_cents: "amount_cents"
+  }
+
+  def self.by_date(metric, group_by_account: false)
+    by_date = group(:date).select(:date, "sum(#{QUERIES[metric]}) as total_amount")
+    by_date = by_date.group(:account_id).select(:account_id) if group_by_account
+    by_date
+  end
+
+  def self.by_day(metric, group_by_account: false)
+    by_date(metric, group_by_account: group_by_account).each_with_object({}) do |entry, amounts|
+      if group_by_account
+        amounts[entry.account_id] ||= {}
+        amounts[entry.account_id][entry.date] = entry.total_amount
+      else
+        amounts[entry.date] = entry.total_amount
+      end
     end
   end
 
-  def self.net_credits_by_date
-    group(:date, :account_id).select("date, account_id, sum(#{credit_amount_query}) as total_amount")
-  end
-
   def self.net_credits
-    sum(credit_amount_query)
+    sum(QUERIES[:net_credits])
   end
 
   private
-
-  def self.credit_amount_query
-    "CASE WHEN type = 'Entries::Credit' THEN amount_cents ELSE -amount_cents END"
-  end
 
   def date_cannot_be_in_the_future
     if self.date.present? && self.date > Date.current

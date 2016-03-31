@@ -24,7 +24,7 @@ class DailyBalance
     @net_credits_by_day ||= Entry.where(account: accounts)
                                  .as_of(date_range.last)
                                  .for_product(for_product)
-                                 .net_credits_by_day
+                                 .by_day(:net_credits, group_by_account: true)
   end
 
   def starting_balance
