@@ -73,7 +73,10 @@ Txn.create(
   name: "Initiate Payment",
   product_uuid: 1,
   date: payment_date,
-  debits: { pending_payments: payment },
+  debits: {
+    pending_interest: interest,
+    pending_principal: principal,
+  },
   credits: {
     interest_receivable: interest,
     principal_receivable: principal,
@@ -85,7 +88,10 @@ Txn.create(
   product_uuid: 1,
   date: payment_date + 2.days,
   debits: { cash: payment },
-  credits: { pending_payments: payment },
+  credits: {
+    pending_interest: interest,
+    pending_principal: principal,
+  },
 )
 
 account = Account.interest_income
@@ -102,6 +108,7 @@ Account.cash.debits.amounts_by_day(start_date: Date.new(2015, 1, 1), for_product
 Account.accrued_interest.daily_balance(date_range: Date.new(2015, 1, 1)..Date.new(2015, 2, 5), for_product: 1)
 # Total balance for multiple accounts
 Account.persisted_balance([:interest_receivable, :principal_receivable], for_product: 1)
+Account.persisted_balance([:pending_interest, :pending_principal], for_product: 1)
 ```
 
 To Do

@@ -2,7 +2,8 @@ Accounts::Asset.create([
   { name: :accrued_interest },
   { name: :principal_receivable },
   { name: :interest_receivable },
-  { name: :pending_payments },
+  { name: :pending_principal },
+  { name: :pending_interest },
   { name: :cash },
   { name: :principal },
 ])
@@ -22,6 +23,74 @@ Txn.create(
   credits: { equity: 100000000 },
 )
 
+###################################################
+# EXAMPLE LOAN 1
+###################################################
+Txn.create(
+  name: "Issue Loan",
+  product_uuid: 1,
+  date: Date.new(2015, 1, 1),
+  debits: { principal: 200000 },
+  credits: { cash: 200000 },
+)
+
+(Date.new(2015, 1, 2)..Date.new(2015, 2, 15)).each do |date|
+  Txn.create(
+    name: "Book Interest",
+    product_uuid: 1,
+    date: date,
+    debits: { accrued_interest: 50 },
+    credits: { interest_income: 50 },
+  )
+end
+
+payment_date = Date.new(2015, 2, 1)
+payment = 2000.to_d
+interest = Account.accrued_interest.balance(for_product: 1, as_of: payment_date)
+principal = payment - interest
+
+Txn.create(
+  name: "Book Installment",
+  product_uuid: 1,
+  date: payment_date,
+  debits: {
+    interest_receivable: interest,
+    principal_receivable: principal,
+  },
+  credits: {
+    accrued_interest: interest,
+    principal: principal,
+  },
+)
+
+Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 1,
+  date: payment_date,
+  debits: {
+    pending_interest: interest,
+    pending_principal: principal,
+  },
+  credits: {
+    interest_receivable: interest,
+    principal_receivable: principal,
+  }
+)
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 1,
+  date: payment_date + 2.days,
+  debits: { cash: payment },
+  credits: {
+    pending_interest: interest,
+    pending_principal: principal,
+  },
+)
+
+###################################################
+# EXAMPLE LOAN 2
+###################################################
 Txn.create(
   name: "Issue Loan",
   product_uuid: 2,
@@ -82,7 +151,7 @@ Txn.create(
   name: "Initiate Payment",
   product_uuid: 2,
   date: Date.new(2015, 4, 1),
-  debits: { pending_payments: 7500 },
+  debits: { pending_principal: 7500 },
   credits: { principal_receivable: 7500 },
 )
 
@@ -94,7 +163,7 @@ Txn.create(
   product_uuid: 2,
   date: Date.new(2015, 4, 1),
   debits: { principal_receivable: 7500 },
-  credits: { pending_payments: 7500 },
+  credits: { pending_principal: 7500 },
 )
 
 Txn.create(
@@ -109,7 +178,7 @@ Txn.create(
   name: "Initiate Payment",
   product_uuid: 2,
   date: Date.new(2015, 5, 1),
-  debits: { pending_payments: 7500 },
+  debits: { pending_principal: 7500 },
   credits: { principal_receivable: 7500 },
 )
 
@@ -118,5 +187,5 @@ Txn.create(
   product_uuid: 2,
   date: Date.new(2015, 5, 3),
   debits: { cash: 7500 },
-  credits: { pending_payments: 7500 },
+  credits: { pending_principal: 7500 },
 )
