@@ -13,12 +13,13 @@ class Entry < ActiveRecord::Base
 
   def self.net_credits_by_day
     net_credits_by_date.each_with_object({}) do |entry, amounts|
-      amounts[entry.date] = entry.total_amount
+      amounts[entry.account_id] ||= {}
+      amounts[entry.account_id][entry.date] = entry.total_amount
     end
   end
 
   def self.net_credits_by_date
-    group(:date).select("date, sum(#{type_query}) as total_amount")
+    group(:date, :account_id).select("date, account_id, sum(#{type_query}) as total_amount")
   end
 
   def self.net_credits
