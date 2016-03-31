@@ -17,12 +17,14 @@ class Entry < ActiveRecord::Base
   }
 
   def self.by_date(metric, group_by_account: false)
+    raise ArgumentError.new("Metric must be one of #{QUERIES.keys}") unless QUERIES[metric].present?
     by_date = group(:date).select(:date, "sum(#{QUERIES[metric]}) as total_amount")
     by_date = by_date.group(:account_id).select(:account_id) if group_by_account
     by_date
   end
 
   def self.by_day(metric, group_by_account: false)
+    raise ArgumentError.new("Metric must be one of #{QUERIES.keys}") unless QUERIES[metric].present?
     by_date(metric, group_by_account: group_by_account).each_with_object({}) do |entry, amounts|
       if group_by_account
         amounts[entry.account_id] ||= {}
