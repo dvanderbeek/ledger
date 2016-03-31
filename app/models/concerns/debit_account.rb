@@ -6,4 +6,8 @@ module DebitAccount
   def decreasing_entries
     credits
   end
+
+  def credit_multiplier
+    -1
+  end
 end
