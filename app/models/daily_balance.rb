@@ -8,7 +8,7 @@ class DailyBalance
   end
 
   def calculate
-    previous_balance = starting_balance
+    previous_balance = starting_balance.to_f
     date_range.each_with_object({}) do |date, balances|
       balances[date] = previous_balance
       accounts.each do |account|
@@ -32,6 +32,6 @@ class DailyBalance
       net_credits_by_day[account.id].map do |date, amount|
         date < date_range.first ? amount * account.credit_multiplier : 0
       end.reduce(0, :+)
-    end.reduce(0, :+).to_f
+    end.reduce(0, :+)
   end
 end
