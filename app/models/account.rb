@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
   end
 
   def daily_balance(date_range:, for_product: nil)
-    net_credits_by_day = entries.net_credits_by_day({ as_of: date_range.last, for_product: for_product })
+    net_credits_by_day = entries.net_credits_by_day(as_of: date_range.last, for_product: for_product)
     starting_balance = net_credits_by_day.map { |k, v| k < date_range.first ? v : 0 }.reduce(:+)
     date_range.each_with_object({}) do |date, balances|
       balances[date] = (
