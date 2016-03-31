@@ -11,11 +11,10 @@ class Entry < ActiveRecord::Base
   scope :as_of, -> (date) { where("date <= ?", date) }
   scope :between, -> (date_range) { where(date: date_range) }
 
-  def self.net_credits_by_day(as_of: Date.current, for_product: nil)
-    net_credits_by_date.for_product(for_product).as_of(as_of)
-      .each_with_object({}) do |entry, amounts|
-        amounts[entry.date] = entry.total_amount
-      end
+  def self.net_credits_by_day
+    net_credits_by_date.each_with_object({}) do |entry, amounts|
+      amounts[entry.date] = entry.total_amount
+    end
   end
 
   def self.net_credits_by_date

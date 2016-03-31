@@ -100,13 +100,12 @@ account.credits.for_product(1).as_of(1.year.ago).sum(:amount_cents)
 Account.cash.debits.amounts_by_day(start_date: Date.new(2015, 1, 1), for_product: 1)
 # Daily balance of accrued interest
 Account.accrued_interest.daily_balance(date_range: Date.new(2015, 1, 1)..Date.new(2015, 2, 5), for_product: 1)
+# Total balance for multiple accounts
+Account.persisted_balance([:interest_receivable, :principal_receivable], for_product: 1)
 ```
 
 To Do
 -----
-
-[ ] Cross-account balances (for example: interest_receivable + principal_receivable, principal + principal_receivable)
-      Maybe some sort of 'parent' or 'virtual' account concept to encapsulate this
 
 [ ] Store date and product uuid on Txn also for querying
 
