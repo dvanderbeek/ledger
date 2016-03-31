@@ -19,8 +19,7 @@ class Entry < ActiveRecord::Base
   end
 
   def self.net_credits_by_date
-    group(:date).
-    select("date, sum(#{type_query}) as total_amount")
+    group(:date).select("date, sum(#{type_query}) as total_amount")
   end
 
   def self.net_credits
