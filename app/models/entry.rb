@@ -19,16 +19,16 @@ class Entry < ActiveRecord::Base
   end
 
   def self.net_credits_by_date
-    group(:date, :account_id).select("date, account_id, sum(#{type_query}) as total_amount")
+    group(:date, :account_id).select("date, account_id, sum(#{credit_amount_query}) as total_amount")
   end
 
   def self.net_credits
-    sum(type_query)
+    sum(credit_amount_query)
   end
 
   private
 
-  def self.type_query
+  def self.credit_amount_query
     "CASE WHEN type = 'Entries::Credit' THEN amount_cents ELSE -amount_cents END"
   end
 
