@@ -14,10 +14,12 @@ class Account < ActiveRecord::Base
   end
 
   def self.balance(names, as_of: Date.current, for_product: nil)
+    names = [names] unless names.is_a?(Array)
     names.map { |name| named(name).balance(as_of: as_of, for_product: for_product) }.reduce(:+)
   end
 
   def self.persisted_balance(names, as_of: Date.current, for_product: nil)
+    names = [names] unless names.is_a?(Array)
     names.map { |name| named(name).persisted_balance(as_of: as_of, for_product: for_product) }.reduce(:+)
   end
 
