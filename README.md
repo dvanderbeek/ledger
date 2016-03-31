@@ -109,6 +109,8 @@ Account.accrued_interest.daily_balance(date_range: Date.new(2015, 1, 1)..Date.ne
 # Total balance for multiple accounts
 Account.persisted_balance([:interest_receivable, :principal_receivable], for_product: 1)
 Account.persisted_balance([:pending_interest, :pending_principal], for_product: 1)
+# Total daily balance for multiple accounts
+Account.daily_balance([:principal, :principal_receivable], date_range: Date.new(2015,4,1)..Date.new(2015,5,5), for_product: 2)
 ```
 
 To Do

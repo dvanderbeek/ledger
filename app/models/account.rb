@@ -14,26 +14,31 @@ class Account < ActiveRecord::Base
   end
 
   def self.balance(names, as_of: Date.current, for_product: nil)
-    names = [names] unless names.is_a?(Array)
-    names.map { |name| named(name).balance(as_of: as_of, for_product: for_product) }.reduce(:+)
+    where(name: names).map { |account| account.balance(as_of: as_of, for_product: for_product) }.reduce(:+)
   end
 
   def self.persisted_balance(names, as_of: Date.current, for_product: nil)
-    names = [names] unless names.is_a?(Array)
-    names.map { |name| named(name).persisted_balance(as_of: as_of, for_product: for_product) }.reduce(:+)
+    where(name: names).map { |account| account.persisted_balance(as_of: as_of, for_product: for_product) }.reduce(:+)
   end
 
-  def self.daily_balance(ids, date_range:, for_product: nil)
-    net_credits_by_day = Entry.where(account_id: ids).as_of(date_range.last).for_product(for_product).net_credits_by_day
+  # TODO: Make a new class to do this calculation
+  def self.daily_balance(names, date_range:, for_product: nil)
+    accounts = names.is_a?(Account) ? [names] : Account.where(name: names)
+    net_credits_by_day = Entry.where(account: accounts).as_of(date_range.last).for_product(for_product).net_credits_by_day
+
     results = date_range.each_with_object({}) { |date, balances| balances[date] = 0 }
-    Account.where(id: ids).each do |account|
-      starting_balance = net_credits_by_day[account.id].map { |k, v| k < date_range.first ? v * account.credit_multiplier : 0 }.reduce(:+).to_f
-      results.each do |date, balance|
-        results[date] += starting_balance
+    starting_balance = accounts.map do |account|
+      net_credits_by_day[account.id].map { |k, v| k < date_range.first ? v * account.credit_multiplier : 0 }.reduce(:+)
+    end.reduce(:+).to_f
+
+    results.each do |date, balance|
+      results[date] = starting_balance
+      accounts.each do |account|
         results[date] += net_credits_by_day[account.id].fetch(date, 0).to_f * account.credit_multiplier
-        starting_balance = results[date]
       end
+      starting_balance = results[date]
     end
+
     results
   end
 
@@ -47,11 +52,6 @@ class Account < ActiveRecord::Base
   end
 
   def daily_balance(date_range:, for_product: nil)
-    net_credits_by_day = entries.as_of(date_range.last).for_product(for_product).net_credits_by_day[id]
-    starting_balance = net_credits_by_day.map { |k, v| k < date_range.first ? v * credit_multiplier : 0 }.reduce(:+).to_f
-    date_range.each_with_object({}) do |date, balances|
-      balances[date] = starting_balance + net_credits_by_day.fetch(date, 0).to_f * credit_multiplier
-      starting_balance = balances[date]
-    end
+    Account.daily_balance(self, date_range: date_range, for_product: for_product)
   end
 end
