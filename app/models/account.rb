@@ -27,9 +27,11 @@ class Account < ActiveRecord::Base
     net_credits_by_day = Entry.where(account: accounts).as_of(date_range.last).for_product(for_product).net_credits_by_day
 
     results = date_range.each_with_object({}) { |date, balances| balances[date] = 0 }
+
     starting_balance = accounts.map do |account|
-      net_credits_by_day[account.id].map { |k, v| k < date_range.first ? v * account.credit_multiplier : 0 }.reduce(:+)
-    end.reduce(:+).to_f
+      net_credits_by_day[account.id] ||= {}
+      net_credits_by_day[account.id].map { |k, v| k < date_range.first ? v * account.credit_multiplier : 0 }.reduce(0, :+)
+    end.reduce(0, :+).to_f
 
     results.each do |date, balance|
       results[date] = starting_balance
