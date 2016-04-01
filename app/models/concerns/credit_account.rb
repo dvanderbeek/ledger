@@ -10,4 +10,8 @@ module CreditAccount
   def credit_multiplier
     1
   end
+
+  def balance_method
+    :net_credits
+  end
 end

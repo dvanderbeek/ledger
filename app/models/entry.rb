@@ -13,6 +13,7 @@ class Entry < ActiveRecord::Base
 
   QUERIES = {
     net_credits: "CASE WHEN type = 'Entries::Credit' THEN amount_cents ELSE -amount_cents END",
+    net_debits: "CASE WHEN type = 'Entries::Debit' THEN amount_cents ELSE -amount_cents END",
     amount_cents: "amount_cents"
   }
 
@@ -37,6 +38,10 @@ class Entry < ActiveRecord::Base
 
   def self.net_credits
     sum(QUERIES[:net_credits])
+  end
+
+  def self.net_debits
+    sum(QUERIES[:net_debits])
   end
 
   private
