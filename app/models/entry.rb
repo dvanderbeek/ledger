@@ -12,8 +12,8 @@ class Entry < ActiveRecord::Base
 
   QUERIES = {
     amount_cents: "amount_cents",
-    net_credits: "CASE WHEN type = 'Entries::Credit' THEN amount_cents ELSE -amount_cents END",
-    net_debits: "CASE WHEN type = 'Entries::Debit' THEN amount_cents ELSE -amount_cents END",
+    net_credits: "CASE WHEN type = 'Entry::Credit' THEN amount_cents ELSE -amount_cents END",
+    net_debits: "CASE WHEN type = 'Entry::Debit' THEN amount_cents ELSE -amount_cents END",
   }
 
   def self.by_date(metric, group_by_account: false)

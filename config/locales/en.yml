@@ -16,4 +16,5 @@ en:
 
   txn:
     errors:
+      date_does_not_match_parent: "must match parent transaction date"
       unbalanced: "debits and credits must balance"

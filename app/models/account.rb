@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
   has_many :entries
-  has_many :debits, class_name: Entries::Debit
-  has_many :credits, class_name: Entries::Credit
+  has_many :debits, inverse_of: :account, class_name: Entry::Debit
+  has_many :credits, inverse_of: :account, class_name: Entry::Credit
 
   validates :name, presence: true, uniqueness: true
 

@@ -1,4 +1,4 @@
-Accounts::Asset.create([
+Account::Asset.create([
   { name: :accrued_interest },
   { name: :principal_receivable },
   { name: :interest_receivable },
@@ -8,11 +8,11 @@ Accounts::Asset.create([
   { name: :principal },
 ])
 
-Accounts::Revenue.create([
+Account::Revenue.create([
   { name: :interest_income },
 ])
 
-Accounts::Equity.create([
+Account::Equity.create([
   { name: :equity },
 ])
 
@@ -99,7 +99,7 @@ Txn.create(
   credits: { cash: 40000 },
 )
 
-Txn.create(
+t = Txn.create(
   name: "Book Installment",
   product_uuid: 2,
   date: Date.new(2015, 1, 1),
@@ -107,7 +107,7 @@ Txn.create(
   credits: { principal: 10000 },
 )
 
-Txn.create(
+t.reversals.create(
   name: "Start Payment Plan",
   product_uuid: 2,
   date: Date.new(2015, 1, 1),
@@ -147,7 +147,7 @@ Txn.create(
   credits: { principal: 7500 },
 )
 
-Txn.create(
+t = Txn.create(
   name: "Initiate Payment",
   product_uuid: 2,
   date: Date.new(2015, 4, 1),
@@ -158,7 +158,7 @@ Txn.create(
 # If payment is processed before it returns, we'd
 #   also need to reverse the process payment Txn.
 #   Date = date of Txn this is reversing (Initiate Payment).
-Txn.create(
+t.reversals.create(
   name: "Payment Return",
   product_uuid: 2,
   date: Date.new(2015, 4, 1),

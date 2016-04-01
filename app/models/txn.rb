@@ -2,8 +2,10 @@ class Txn < ActiveRecord::Base
   include DefaultDate
 
   has_many :entries, dependent: :destroy
-  has_many :debits, class_name: Entries::Debit
-  has_many :credits, class_name: Entries::Credit
+  has_many :debits, inverse_of: :txn, class_name: Entry::Debit
+  has_many :credits, inverse_of: :txn, class_name: Entry::Credit
+  has_many :adjustments, inverse_of: :parent, foreign_key: :parent_id, class_name: Txn::Adjustment
+  has_many :reversals, inverse_of: :parent, foreign_key: :parent_id, class_name: Txn::Reversal
 
   validates :name, presence: true
   validate :debits_equal_credits
@@ -20,7 +22,7 @@ class Txn < ActiveRecord::Base
           date: self.date,
           account: Account.find_by(name: key),
           amount_cents: value,
-          product_uuid: product_uuid,
+          product_uuid: self.product_uuid,
         )
       end
     end

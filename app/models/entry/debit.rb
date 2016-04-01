@@ -1,4 +1,4 @@
-module Entries
+class Entry
   class Debit < ::Entry
   end
 end
