@@ -26,8 +26,8 @@ ActiveRecord::Schema.define(version: 20160401013927) do
   create_table "entries", force: :cascade do |t|
     t.integer  "account_id"
     t.decimal  "amount_cents"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
     t.string   "type"
     t.string   "product_uuid"
     t.integer  "txn_id"
@@ -41,8 +41,8 @@ ActiveRecord::Schema.define(version: 20160401013927) do
 
   create_table "txns", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
     t.date     "date"
     t.string   "product_uuid"
   end
