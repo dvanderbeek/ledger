@@ -108,17 +108,13 @@ Account.cash.debits.for_product(1).by_day(:amount_cents)
 Account.accrued_interest.daily_balance(date_range: Date.new(2015, 1, 1)..Date.new(2015, 2, 5), for_product: 1)
 # Total balance for multiple accounts
 Account.persisted_balance([:interest_receivable, :principal_receivable], for_product: 1)
-Account.persisted_balance([:pending_interest, :pending_principal], for_product: 1)
+Account.persisted_balance([:pending_interest, :pending_principal], for_product: 2, as_of: '2015-05-01')
 # Total daily balance for multiple accounts
 Account.daily_balance([:principal, :principal_receivable], date_range: Date.new(2015,4,1)..Date.new(2015,5,5), for_product: 2)
 ```
 
 To Do
 -----
-
-[ ] Store date and product uuid on Txn also for querying
-
-[ ] Change Entry.date to timestamp?
 
 [ ] Convert to Sinatra Service
 

@@ -3,10 +3,12 @@ class Txn < ActiveRecord::Base
   has_many :debits, class_name: Entries::Debit
   has_many :credits, class_name: Entries::Credit
 
-  attr_accessor :date, :product_uuid
-
   validates :name, presence: true
   validate :debits_equal_credits
+
+  scope :for_product, -> (uuid) { uuid.present? ? where(product_uuid: uuid) : all }
+  scope :as_of, -> (date) { where("date <= ?", date) }
+  scope :between, -> (date_range) { where(date: date_range) }
 
   %w[debits credits].each do |entry_type|
     define_method("#{entry_type}=") do |hash|
