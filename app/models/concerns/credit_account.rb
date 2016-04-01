@@ -11,7 +11,7 @@ module CreditAccount
     1
   end
 
-  def balance_method
-    :net_credits
+  def credit_account?
+    true
   end
 end

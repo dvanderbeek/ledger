@@ -11,7 +11,7 @@ module DebitAccount
     -1
   end
 
-  def balance_method
-    :net_debits
+  def credit_account?
+    false
   end
 end

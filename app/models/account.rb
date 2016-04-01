@@ -31,7 +31,10 @@ class Account < ActiveRecord::Base
   end
 
   def persisted_balance(as_of: Date.current, for_product: nil)
-    entries.as_of(as_of).for_product(for_product).public_send(balance_method)
+    entries
+      .as_of(as_of)
+      .for_product(for_product)
+      .net(credit_account? ? :credits : :debits)
   end
 
   def daily_balance(date_range:, for_product: nil)

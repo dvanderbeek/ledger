@@ -36,12 +36,8 @@ class Entry < ActiveRecord::Base
     end
   end
 
-  def self.net_credits
-    sum(QUERIES[:net_credits])
-  end
-
-  def self.net_debits
-    sum(QUERIES[:net_debits])
+  def self.net(type)
+    sum(QUERIES["net_#{type}".to_sym])
   end
 
   private
