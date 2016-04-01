@@ -5,8 +5,8 @@ class Account < ActiveRecord::Base
 
   validates :name, presence: true, uniqueness: true
 
-  Account.pluck(:name).each do |name|
-    scope name.to_sym, -> { find_by(name: name) }
+  def self.method_missing(method, *args, &block)
+    find_by(name: method)
   end
 
   def self.balance(names, as_of: Date.current, for_product: nil)

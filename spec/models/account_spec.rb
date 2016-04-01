@@ -14,11 +14,11 @@ RSpec.describe Account, type: :model do
 
   describe ".named" do
     it "finds an account by name" do
-      account = build_stubbed(:account, name: :test)
+      account = create(:account, name: :test123)
 
-      expect(Account).to receive(:find_by).with(name: :test).and_return(account)
+      expect(Account).to receive(:find_by).with(name: :test123).and_return(account)
 
-      expect(Account.named(:test)).to eq account
+      expect(Account.test123).to eq account
     end
   end
 end
