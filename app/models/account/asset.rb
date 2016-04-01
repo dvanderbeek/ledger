@@ -1,4 +1,4 @@
-module Accounts
+class Account
   class Asset < ::Account
     include DebitAccount
   end

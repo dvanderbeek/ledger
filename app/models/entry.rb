@@ -1,10 +1,11 @@
 class Entry < ActiveRecord::Base
-  include DefaultDate
-
   belongs_to :account
   belongs_to :txn
 
   validates :date, :account, :txn, :amount_cents, presence: true
+  validate :date_equals_txn
+
+  after_initialize :set_defaults, if: :new_record?
 
   scope :for_product, -> (uuid) { uuid.present? ? where(product_uuid: uuid) : all }
   scope :as_of, -> (date) { where("date <= ?", date) }
@@ -12,8 +13,8 @@ class Entry < ActiveRecord::Base
 
   QUERIES = {
     amount_cents: "amount_cents",
-    net_credits: "CASE WHEN type = 'Entries::Credit' THEN amount_cents ELSE -amount_cents END",
-    net_debits: "CASE WHEN type = 'Entries::Debit' THEN amount_cents ELSE -amount_cents END",
+    net_credits: "CASE WHEN type = 'Entry::Credit' THEN amount_cents ELSE -amount_cents END",
+    net_debits: "CASE WHEN type = 'Entry::Debit' THEN amount_cents ELSE -amount_cents END",
   }
 
   def self.by_date(metric, group_by_account: false)
@@ -45,5 +46,16 @@ class Entry < ActiveRecord::Base
 
   def self.handle_error(metric)
     raise ArgumentError.new("Metric must be one of #{QUERIES.keys}") unless QUERIES[metric].present?
+  end
+
+  def date_equals_txn
+    if self.date != self.txn.try(:date)
+      errors.add(:date, t('entry.errors.txn_date_mismatch'))
+    end
+  end
+
+  def set_defaults
+    self.date ||= self.txn.try(:date)
+    self.product_uuid ||= self.txn.try(:product_uuid)
   end
 end

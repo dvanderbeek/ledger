@@ -26,6 +26,16 @@ RSpec.describe Txn, type: :model do
       txn.valid?
       expect(txn.errors[:base]).not_to include(I18n.t('txn.errors.unbalanced'))
     end
+
+    it "does not allow future dates" do
+      txn = Txn.new(date: Date.current + 1.day)
+      expect(txn).not_to be_valid
+      expect(txn.errors[:date]).to include I18n.t('txn.errors.date_in_future')
+    end
+  end
+
+  it "has a default date" do
+    expect(Txn.new.date).to eq Date.current
   end
 
   it "sets up Debits and Credits" do

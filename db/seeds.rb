@@ -1,4 +1,4 @@
-Accounts::Asset.create([
+Account::Asset.create([
   { name: :accrued_interest },
   { name: :principal_receivable },
   { name: :interest_receivable },
@@ -8,11 +8,11 @@ Accounts::Asset.create([
   { name: :principal },
 ])
 
-Accounts::Revenue.create([
+Account::Revenue.create([
   { name: :interest_income },
 ])
 
-Accounts::Equity.create([
+Account::Equity.create([
   { name: :equity },
 ])
 
