@@ -12,9 +12,9 @@ class Entry < ActiveRecord::Base
   scope :between, -> (date_range) { where(date: date_range) }
 
   QUERIES = {
+    amount_cents: "amount_cents",
     net_credits: "CASE WHEN type = 'Entries::Credit' THEN amount_cents ELSE -amount_cents END",
     net_debits: "CASE WHEN type = 'Entries::Debit' THEN amount_cents ELSE -amount_cents END",
-    amount_cents: "amount_cents"
   }
 
   def self.by_date(metric, group_by_account: false)
