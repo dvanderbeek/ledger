@@ -2,12 +2,14 @@ class Txn < ActiveRecord::Base
   has_many :entries, dependent: :destroy
   has_many :debits, inverse_of: :txn, class_name: Entry::Debit
   has_many :credits, inverse_of: :txn, class_name: Entry::Credit
+  has_many :adjustments, inverse_of: :parent, foreign_key: :parent_id, class_name: Txn::Adjustment
+  has_many :reversals, inverse_of: :parent, foreign_key: :parent_id, class_name: Txn::Reversal
 
   validates :name, presence: true
   validate :date_cannot_be_in_the_future
   validate :debits_equal_credits
 
-  after_initialize :set_defaults, if: :new_record?
+  before_validation :set_defaults, on: :create
 
   scope :for_product, -> (uuid) { uuid.present? ? where(product_uuid: uuid) : all }
   scope :as_of, -> (date) { where("date <= ?", date) }

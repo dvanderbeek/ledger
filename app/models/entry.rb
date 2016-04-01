@@ -5,7 +5,7 @@ class Entry < ActiveRecord::Base
   validates :date, :account, :txn, :amount_cents, presence: true
   validate :date_equals_txn
 
-  after_initialize :set_defaults, if: :new_record?
+  before_validation :set_defaults, on: :create
 
   scope :for_product, -> (uuid) { uuid.present? ? where(product_uuid: uuid) : all }
   scope :as_of, -> (date) { where("date <= ?", date) }
@@ -50,7 +50,7 @@ class Entry < ActiveRecord::Base
 
   def date_equals_txn
     if self.date != self.txn.try(:date)
-      errors.add(:date, t('entry.errors.txn_date_mismatch'))
+      errors.add(:date, I18n.t('entry.errors.txn_date_mismatch'))
     end
   end
 

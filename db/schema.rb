@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160401013927) do
+ActiveRecord::Schema.define(version: 20160401184328) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,9 +45,12 @@ ActiveRecord::Schema.define(version: 20160401013927) do
     t.datetime "updated_at",   null: false
     t.date     "date"
     t.string   "product_uuid"
+    t.integer  "parent_id"
+    t.string   "type"
   end
 
   add_index "txns", ["date"], name: "index_txns_on_date", using: :btree
+  add_index "txns", ["parent_id"], name: "index_txns_on_parent_id", using: :btree
   add_index "txns", ["product_uuid"], name: "index_txns_on_product_uuid", using: :btree
 
   add_foreign_key "entries", "accounts"
