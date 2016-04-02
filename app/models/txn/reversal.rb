@@ -1,24 +1,22 @@
 class Txn
   class Reversal < ::Txn
-    belongs_to :parent, class_name: Txn, inverse_of: :reversals
+    belongs_to :parent, inverse_of: :reversals, class_name: Txn
 
-    validates :parent, presence: true
-    validate :date_equals_parent
-
-    after_initialize :set_defaults
+    before_validation :set_defaults, on: :create
 
     private
 
-    def date_equals_parent
-      if self.date.present? && self.date != parent.date
-        errors.add(:date, I18n.t('txn.errors.date_does_not_match_parent'))
-      end
-    end
-
     def set_defaults
-      # self.date = parent.date
-      # self.product_uuid = parent.product_uuid
-      # Figure out debits and credits
+      self.date ||= self.parent.date
+      self.product_uuid ||= self.parent.product_uuid
+
+      parent.debits.each do |debit|
+        credits.build(debit.attributes.except('id', 'created_at', 'updated_at', 'type'))
+      end
+
+      parent.credits.each do |credit|
+        debits.build(credit.attributes.except('id', 'created_at', 'updated_at', 'type'))
+      end
     end
   end
 end

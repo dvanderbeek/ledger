@@ -6,7 +6,7 @@ en:
 
   entry:
     errors:
-      date_in_future: "can't be in the future"
+      txn_date_mismatch: 'must match transaction date'
 
   time:
     formats:
@@ -16,5 +16,5 @@ en:
 
   txn:
     errors:
-      date_does_not_match_parent: "must match parent transaction date"
-      unbalanced: "debits and credits must balance"
+      date_in_future: "can't be in the future"
+      unbalanced: 'debits and credits must balance'

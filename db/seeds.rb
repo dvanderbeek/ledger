@@ -107,13 +107,7 @@ t = Txn.create(
   credits: { principal: 10000 },
 )
 
-t.reversals.create(
-  name: "Start Payment Plan",
-  product_uuid: 2,
-  date: Date.new(2015, 1, 1),
-  debits: { principal: 10000 },
-  credits: { principal_receivable: 10000 },
-)
+t.reversals.create(name: "Start Payment Plan")
 
 Txn.create(
   name: "Process Payment",
@@ -157,14 +151,7 @@ t = Txn.create(
 
 # If payment is processed before it returns, we'd
 #   also need to reverse the process payment Txn.
-#   Date = date of Txn this is reversing (Initiate Payment).
-t.reversals.create(
-  name: "Payment Return",
-  product_uuid: 2,
-  date: Date.new(2015, 4, 1),
-  debits: { principal_receivable: 7500 },
-  credits: { pending_principal: 7500 },
-)
+t.reversals.create(name: "Payment Return")
 
 Txn.create(
   name: "Book Installment",
