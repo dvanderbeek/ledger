@@ -5,7 +5,7 @@ class Txn < ActiveRecord::Base
   has_many :adjustments, inverse_of: :parent, foreign_key: :parent_id, class_name: Txn::Adjustment
   has_many :reversals, inverse_of: :parent, foreign_key: :parent_id, class_name: Txn::Reversal
 
-  validates :name, presence: true
+  validates :name, :date, presence: true
   validate :date_cannot_be_in_the_future
   validate :debits_equal_credits
 

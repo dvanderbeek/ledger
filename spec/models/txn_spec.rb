@@ -34,10 +34,6 @@ RSpec.describe Txn, type: :model do
     end
   end
 
-  it "has a default date" do
-    expect(Txn.new.date).to eq Date.current
-  end
-
   it "sets up Debits and Credits" do
     txn = build_stubbed(:txn,
       debits: { accounts_receivable: 3000 },
