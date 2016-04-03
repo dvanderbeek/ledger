@@ -2,26 +2,26 @@ class Entry < ActiveRecord::Base
   belongs_to :account
   belongs_to :txn
 
-  validates :date, :account, :txn, :amount_cents, presence: true
-  validate :date_equals_txn
+  validates :account, :txn, :amount_cents, presence: true
 
-  before_validation :set_defaults, on: :create
+  scope :for_product, -> (uuid) { uuid.present? ? joins(:txn).where(txns: { product_uuid: uuid }) : all }
+  scope :as_of, -> (date) { joins(:txn).where("date <= ?", date) }
+  scope :between, -> (date_range) { joins(:txn).where(txns: { date: date_range }) }
 
-  scope :for_product, -> (uuid) { uuid.present? ? where(product_uuid: uuid) : all }
-  scope :as_of, -> (date) { where("date <= ?", date) }
-  scope :between, -> (date_range) { where(date: date_range) }
+  delegate :date, to: :txn, prefix: true
+  delegate :product_uuid, to: :txn
 
   QUERIES = {
     amount_cents: "amount_cents",
-    net_credits: "CASE WHEN type = 'Entry::Credit' THEN amount_cents ELSE -amount_cents END",
-    net_debits: "CASE WHEN type = 'Entry::Debit' THEN amount_cents ELSE -amount_cents END",
+    net_credits: "CASE WHEN entries.type = 'Entry::Credit' THEN amount_cents ELSE -amount_cents END",
+    net_debits: "CASE WHEN entries.type = 'Entry::Debit' THEN amount_cents ELSE -amount_cents END",
   }
 
   def self.by_date(metric, group_by_account: false)
     handle_error(metric)
     by_date = group(:date).select(:date, "sum(#{QUERIES[metric]}) as total_amount")
     by_date = by_date.group(:account_id).select(:account_id) if group_by_account
-    by_date.order(:date)
+    by_date.order('txns.date')
   end
 
   def self.by_day(metric, group_by_account: false)
@@ -46,16 +46,5 @@ class Entry < ActiveRecord::Base
 
   def self.handle_error(metric)
     raise ArgumentError.new("Metric must be one of #{QUERIES.keys}") unless QUERIES[metric].present?
-  end
-
-  def date_equals_txn
-    if self.date != self.txn.try(:date)
-      errors.add(:date, I18n.t('entry.errors.txn_date_mismatch'))
-    end
-  end
-
-  def set_defaults
-    self.date ||= self.txn.try(:date)
-    self.product_uuid ||= self.txn.try(:product_uuid)
   end
 end

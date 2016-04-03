@@ -7,37 +7,61 @@ RSpec.describe Entry, type: :model do
   end
 
   context "validations" do
-    it { is_expected.to validate_presence_of(:date) }
     it { is_expected.to validate_presence_of(:account) }
     it { is_expected.to validate_presence_of(:txn) }
     it { is_expected.to validate_presence_of(:amount_cents) }
   end
 
   describe ".for_product" do
+    before do
+      create(:account, name: :accounts_receivable)
+      create(:account, name: :interest_income)
+    end
+
     it "returns the correct records" do
-      entry_1 = Entry.new(product_uuid: 1)
-      entry_2 = Entry.new(product_uuid: 2)
-      entry_1.save(validate: false)
-      entry_2.save(validate: false)
+      txn1 = create(:txn,
+        product_uuid: 1,
+        debits: { accounts_receivable: 3000 },
+        credits: { interest_income: 3000 },
+      )
+
+      txn2 = create(:txn,
+        product_uuid: 2,
+        debits: { accounts_receivable: 2000 },
+        credits: { interest_income: 2000 },
+      )
 
       query = Entry.for_product(1)
 
-      expect(query).to include(entry_1)
-      expect(query).not_to include(entry_2)
+      expect(Entry.count).to eq 4
+      expect(query.count).to eq 2
     end
   end
 
   describe ".as_of" do
+    before do
+      create(:account, name: :accounts_receivable)
+      create(:account, name: :interest_income)
+    end
+
     it "returns the correct records" do
-      entry_1 = Entry.new(date: 1.year.ago)
-      entry_2 = Entry.new(date: Date.current)
-      entry_1.save(validate: false)
-      entry_2.save(validate: false)
+      txn1 = create(:txn,
+        product_uuid: 1,
+        date: 1.year.ago,
+        debits: { accounts_receivable: 3000 },
+        credits: { interest_income: 3000 },
+      )
+
+      txn2 = create(:txn,
+        product_uuid: 2,
+        debits: { accounts_receivable: 2000 },
+        credits: { interest_income: 2000 },
+      )
 
       query = Entry.as_of(Date.yesterday)
 
-      expect(query).to include(entry_1)
-      expect(query).not_to include(entry_2)
+      expect(Entry.count).to eq 4
+      expect(query.count).to eq 2
     end
   end
 end
