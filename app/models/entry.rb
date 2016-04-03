@@ -21,7 +21,7 @@ class Entry < ActiveRecord::Base
     handle_error(metric)
     by_date = group(:date).select(:date, "sum(#{QUERIES[metric]}) as total_amount")
     by_date = by_date.group(:account_id).select(:account_id) if group_by_account
-    by_date
+    by_date.order(:date)
   end
 
   def self.by_day(metric, group_by_account: false)
