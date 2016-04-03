@@ -24,8 +24,9 @@ Txn.create(
 )
 
 ###################################################
-# EXAMPLE LOAN 1
+# EXAMPLE LOAN 1 - On time payment, then late payment (with interest)
 ###################################################
+puts "Example Loan 1"
 Txn.create(
   name: "Issue Loan",
   product_uuid: 1,
@@ -34,7 +35,7 @@ Txn.create(
   credits: { cash: 200000 },
 )
 
-(Date.new(2015, 1, 2)..Date.new(2015, 2, 15)).each do |date|
+(Date.new(2015, 1, 2)..Date.new(2015, 3, 15)).each do |date|
   Txn.create(
     name: "Book Interest",
     product_uuid: 1,
@@ -88,9 +89,59 @@ Txn.create(
   },
 )
 
+installment_date = Date.new(2015, 3, 1)
+late_payment_date = Date.new(2015, 3, 5)
+payment = 2000.to_d
+interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: installment_date)
+principal = payment - interest
+Txn.create(
+  name: "Book Installment",
+  product_uuid: 1,
+  date: installment_date,
+  debits: {
+    interest_receivable: interest,
+    principal_receivable: principal,
+  },
+  credits: {
+    accrued_interest: interest,
+    principal: principal,
+  },
+)
+
+accrued_interest = Account.balance(:accrued_interest, for_product: 1, as_of: late_payment_date)
+interest_receivable = Account.balance(:interest_receivable, for_product: 1, as_of: late_payment_date)
+total_interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: late_payment_date)
+principal = payment - total_interest
+Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 1,
+  date: late_payment_date,
+  debits: {
+    pending_interest: total_interest,
+    pending_principal: principal,
+  },
+  credits: {
+    accrued_interest: accrued_interest,
+    interest_receivable: interest_receivable,
+    principal_receivable: principal,
+  }
+)
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 1,
+  date: late_payment_date + 2.days,
+  debits: { cash: payment },
+  credits: {
+    pending_interest: total_interest,
+    pending_principal: principal,
+  },
+)
+
 ###################################################
 # EXAMPLE LOAN 2: Pmt Plan, apply to future
 ###################################################
+puts "Example Loan 2"
 Txn.create(
   name: "Issue Loan",
   product_uuid: 2,
@@ -181,6 +232,7 @@ Txn.create(
 ###################################################
 # EXAMPLE LOAN 3: Pmt Plan, DO NOT apply to future, miss payments
 ###################################################
+puts "Example Loan 3"
 Txn.create(
   name: "Issue Loan",
   product_uuid: 3,
