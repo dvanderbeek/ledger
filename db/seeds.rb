@@ -89,7 +89,7 @@ Txn.create(
 )
 
 ###################################################
-# EXAMPLE LOAN 2
+# EXAMPLE LOAN 2: Pmt Plan, apply to future
 ###################################################
 Txn.create(
   name: "Issue Loan",
@@ -175,4 +175,129 @@ Txn.create(
   date: Date.new(2015, 5, 3),
   debits: { cash: 7500 },
   credits: { pending_principal: 7500 },
+)
+
+###################################################
+# EXAMPLE LOAN 3: Pmt Plan, DO NOT apply to future
+###################################################
+Txn.create(
+  name: "Issue Loan",
+  product_uuid: 3,
+  date: Date.new(2014, 12, 1),
+  debits: { principal: 40000 },
+  credits: { cash: 40000 },
+)
+
+t = Txn.create(
+  name: "Book Installment",
+  product_uuid: 3,
+  date: Date.new(2015, 1, 1),
+  debits: { principal_receivable: 10000 },
+  credits: { principal: 10000 },
+)
+
+t.reversals.create(name: "Start Payment Plan")
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 3,
+  date: Date.new(2015, 1, 15),
+  debits: { cash: 15000 },
+  credits: { principal: 15000 },
+)
+
+Txn.create(
+  name: "Book Installment",
+  product_uuid: 3,
+  date: Date.new(2015, 2, 1),
+  debits: { principal_receivable: 7500 },
+  credits: { principal: 7500 },
+)
+
+Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 3,
+  date: Date.new(2015, 2, 1),
+  debits: { pending_principal: 7500 },
+  credits: { principal_receivable: 7500 },
+)
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 3,
+  date: Date.new(2015, 2, 3),
+  debits: { cash: 7500 },
+  credits: { pending_principal: 7500 },
+)
+
+Txn.create(
+  name: "Book Installment",
+  product_uuid: 3,
+  date: Date.new(2015, 3, 1),
+  debits: { principal_receivable: 7500 },
+  credits: { principal: 7500 },
+)
+
+Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 3,
+  date: Date.new(2015, 3, 1),
+  debits: { pending_principal: 7500 },
+  credits: { principal_receivable: 7500 },
+)
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 3,
+  date: Date.new(2015, 3, 3),
+  debits: { cash: 7500 },
+  credits: { pending_principal: 7500 },
+)
+
+Txn.create(
+  name: "Book Installment",
+  product_uuid: 3,
+  date: Date.new(2015, 4, 1),
+  debits: { principal_receivable: 7500 },
+  credits: { principal: 7500 },
+)
+
+Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 3,
+  date: Date.new(2015, 4, 1),
+  debits: { pending_principal: 7500 },
+  credits: { principal_receivable: 7500 },
+)
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 3,
+  date: Date.new(2015, 4, 3),
+  debits: { cash: 7500 },
+  credits: { pending_principal: 7500 },
+)
+
+Txn.create(
+  name: "Book Installment",
+  product_uuid: 3,
+  date: Date.new(2015, 5, 1),
+  debits: { principal_receivable: 2500 },
+  credits: { principal: 2500 },
+)
+
+Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 3,
+  date: Date.new(2015, 5, 1),
+  debits: { pending_principal: 2500 },
+  credits: { principal_receivable: 2500 },
+)
+
+Txn.create(
+  name: "Process Payment",
+  product_uuid: 3,
+  date: Date.new(2015, 5, 3),
+  debits: { cash: 2500 },
+  credits: { pending_principal: 2500 },
 )
