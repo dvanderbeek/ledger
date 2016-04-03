@@ -91,39 +91,39 @@ Txn.create(
 
 installment_date = Date.new(2015, 3, 1)
 late_payment_date = Date.new(2015, 3, 5)
-payment = 2000.to_d
-interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: installment_date)
-principal = payment - interest
+# payment = 2000
+# interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: installment_date) # 1400
+# principal = payment - interest # 600
 Txn.create(
   name: "Book Installment",
   product_uuid: 1,
   date: installment_date,
   debits: {
-    interest_receivable: interest,
-    principal_receivable: principal,
+    interest_receivable: 1400,
+    principal_receivable: 600,
   },
   credits: {
-    accrued_interest: interest,
-    principal: principal,
+    accrued_interest: 1400,
+    principal: 600,
   },
 )
 
-accrued_interest = Account.balance(:accrued_interest, for_product: 1, as_of: late_payment_date)
-interest_receivable = Account.balance(:interest_receivable, for_product: 1, as_of: late_payment_date)
-total_interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: late_payment_date)
-principal = payment - total_interest
+# accrued_interest = Account.balance(:accrued_interest, for_product: 1, as_of: late_payment_date) # 1400
+# interest_receivable = Account.balance(:interest_receivable, for_product: 1, as_of: late_payment_date) # 200
+# total_interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: late_payment_date) # 1600
+# principal = payment - total_interest # 400
 Txn.create(
   name: "Initiate Payment",
   product_uuid: 1,
   date: late_payment_date,
   debits: {
-    pending_interest: total_interest,
-    pending_principal: principal,
+    pending_interest: 1600,
+    pending_principal: 400,
   },
   credits: {
-    accrued_interest: accrued_interest,
-    interest_receivable: interest_receivable,
-    principal_receivable: principal,
+    accrued_interest: 1400,
+    interest_receivable: 200,
+    principal_receivable: 400,
   }
 )
 
@@ -131,10 +131,10 @@ Txn.create(
   name: "Process Payment",
   product_uuid: 1,
   date: late_payment_date + 2.days,
-  debits: { cash: payment },
+  debits: { cash: 2000 },
   credits: {
-    pending_interest: total_interest,
-    pending_principal: principal,
+    pending_interest: 1600,
+    pending_principal: 400,
   },
 )
 
