@@ -11,7 +11,7 @@ RSpec.describe CreditAccount do
     allow(account).to receive_message_chain(:credits, :as_of, :for_product) { credits }
     allow(account).to receive_message_chain(:debits, :as_of, :for_product) { debits }
 
-    expect(account.balance).to eq 150
+    expect(account.balance_for_new_record).to eq 150
   end
 
   it "handles no credits" do
@@ -22,7 +22,7 @@ RSpec.describe CreditAccount do
     allow(account).to receive_message_chain(:credits, :as_of, :for_product) { credits }
     allow(account).to receive_message_chain(:debits, :as_of, :for_product) { debits }
 
-    expect(account.balance).to eq -50
+    expect(account.balance_for_new_record).to eq -50
   end
 
   it "handles no debits" do
@@ -33,6 +33,6 @@ RSpec.describe CreditAccount do
     allow(account).to receive_message_chain(:credits, :as_of, :for_product) { credits }
     allow(account).to receive_message_chain(:debits, :as_of, :for_product) { debits }
 
-    expect(account.balance).to eq 200
+    expect(account.balance_for_new_record).to eq 200
   end
 end

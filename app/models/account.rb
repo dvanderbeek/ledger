@@ -24,6 +24,11 @@ class Account < ActiveRecord::Base
       .net(credit_account? ? :credits : :debits)
   end
 
+  def balance_for_new_record(as_of: Date.current, for_product: nil)
+    increasing_entries.as_of(as_of).for_product(for_product).map(&:amount_cents).reduce(0, :+) -
+      decreasing_entries.as_of(as_of).for_product(for_product).map(&:amount_cents).reduce(0, :+)
+  end
+
   def daily_balance(date_range:, for_product: nil)
     DailyBalance.new(self, date_range: date_range, for_product: for_product).calculate
   end
