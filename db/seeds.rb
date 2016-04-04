@@ -168,7 +168,7 @@ Txn.create(
   debits: { cash: 15000 },
   credits: { principal_receivable: 15000 },
 )
-  
+
 Txn.create(
   name: "Book Installment",
   product_uuid: 2,
@@ -420,6 +420,8 @@ end
 # additional accrued_interest = 40 (accrued_interest balance as of 1/5 = total additional interest booked)
 # total_interest_adjustment = 1550 + 40 = 1590
 # principal_adjustment = (2000 - 160) - (2000 - 1750) = total_interest_adjustment = 1590
+# => interest is increasing, so the related credits / debits are the same as the original
+# => principal portion is decreasing, so the related credits / debits are opposite of the original
 initiate_pmt_2.adjustments.create(
   name: "Initiate Payment Adjustment",
   debits: {
