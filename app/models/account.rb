@@ -13,6 +13,10 @@ class Account < ActiveRecord::Base
     where(name: names).map { |account| account.balance(as_of: as_of, for_product: for_product) }.reduce(:+)
   end
 
+  def self.balance_for_new_record(names, as_of: Date.current, for_product: nil)
+    where(name: names).map { |account| account.balance_for_new_record(as_of: as_of, for_product: for_product) }.reduce(:+)
+  end
+
   def self.daily_balance(names, date_range:, for_product: nil)
     DailyBalance.new(names, date_range: date_range, for_product: for_product).calculate
   end
