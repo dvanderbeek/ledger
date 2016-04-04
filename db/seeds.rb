@@ -290,3 +290,152 @@ Txn.create(
   debits: { principal_receivable: 2500 },
   credits: { principal: 2500 },
 )
+
+###################################################
+# EXAMPLE LOAN 4: Pmt 1, Pmt 2, Pmt 1 Returns
+###################################################
+puts "Example Loan 4"
+Txn.create(
+  name: "Issue Loan",
+  product_uuid: 4,
+  date: Date.new(2014, 12, 1),
+  debits: { principal: 200000 },
+  credits: { cash: 200000 },
+)
+
+(Date.new(2014, 12, 2)..Date.new(2015, 1, 1)).each do |date|
+  Txn.create(
+    name: "Book Interest",
+    product_uuid: 4,
+    date: date,
+    debits: { accrued_interest: 50 },
+    credits: { interest_income: 50 },
+  )
+end
+
+inst_1 = Txn.create(
+  name: "Book Installment",
+  product_uuid: 4,
+  date: Date.new(2015, 1, 1),
+  debits: {
+    interest_receivable: 1550,
+    principal_receivable: 2000 - 1550,
+  },
+  credits: {
+    accrued_interest: 1550,
+    principal: 2000 - 1550,
+  },
+)
+
+initiate_pmt_1 = Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 4,
+  date: Date.new(2015, 1, 1),
+  debits: {
+    pending_interest: 1550,
+    pending_principal: 2000 - 1550,
+  },
+  credits: {
+    accrued_interest: 0,
+    interest_receivable: 1550,
+    principal_receivable: 2000 - 1550,
+  }
+)
+
+# Book less interest now that principal is in "pending" account
+(Date.new(2015, 1, 2)..Date.new(2015, 1, 3)).each do |date|
+  Txn.create(
+    name: "Book Interest",
+    product_uuid: 4,
+    date: date,
+    debits: { accrued_interest: 40 },
+    credits: { interest_income: 40 },
+  )
+end
+
+process_pmt_1 = Txn.create(
+  name: "Process Payment",
+  product_uuid: 4,
+  date: Date.new(2015, 1, 3),
+  debits: { cash: 2000 },
+  credits: {
+    pending_interest: 1550,
+    pending_principal: 2000 - 1550,
+  },
+)
+
+(Date.new(2015, 1, 4)..Date.new(2015, 1, 5)).each do |date|
+  Txn.create(
+    name: "Book Interest",
+    product_uuid: 4,
+    date: date,
+    debits: { accrued_interest: 40 },
+    credits: { interest_income: 40 },
+  )
+end
+
+initiate_pmt_2 = Txn.create(
+  name: "Initiate Payment",
+  product_uuid: 4,
+  date: Date.new(2015, 1, 5),
+  debits: {
+    pending_interest: 160,
+    pending_principal: 2000 - 160,
+  },
+  credits: {
+    accrued_interest: 160,
+    interest_receivable: 0,
+    principal_receivable: 2000 - 160,
+  }
+)
+
+process_pmt_2 = Txn.create(
+  name: "Process Payment",
+  product_uuid: 4,
+  date: Date.new(2015, 1, 5),
+  debits: { cash: 2000 },
+  credits: {
+    pending_interest: 160,
+    pending_principal: 2000 - 160,
+  },
+)
+
+# Payment 1 Returns
+initiate_pmt_1.reversals.create(name: "Payment Return")
+process_pmt_1.reversals.create(name: "Payment Return")
+
+# Adjust interest booked for higher principal balance
+(Date.new(2015, 1, 2)..Date.new(2015, 1, 5)).each do |date|
+  Txn.create(
+    name: "Book Interest",
+    product_uuid: 4,
+    date: date,
+    debits: { accrued_interest: 10 },
+    credits: { interest_income: 10 },
+  )
+end
+
+# Adjust payment 2 breakdown
+# interest_receivable = 1550 (interest_receivable balance as of 1/5 = returned payment interest amount)
+# additional accrued_interest = 40 (accrued_interest balance as of 1/5 = total additional interest booked)
+# total_interest_adjustment = 1550 + 40 = 1590
+# principal_adjustment = (2000 - 160) - (2000 - 1750) = total_interest_adjustment = 1590
+initiate_pmt_2.adjustments.create(
+  name: "Initiate Payment Adjustment",
+  debits: {
+    pending_interest: 1590,
+    principal_receivable: 1590,
+  },
+  credits: {
+    accrued_interest: 40,
+    interest_receivable: 1550,
+    pending_principal: 1590,
+  }
+)
+
+# Adjust payment 2 processing txn breakdown
+process_pmt_2.adjustments.create(
+  name: "Process Payment Adjustment",
+  debits: { pending_principal: 1590 },
+  credits: { pending_interest: 1590 },
+)
