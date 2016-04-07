@@ -376,7 +376,6 @@ initiate_pmt_2 = Txn.create(
   },
   credits: {
     accrued_interest: 160,
-    interest_receivable: 0,
     principal_receivable: 2000 - 160,
   }
 )
