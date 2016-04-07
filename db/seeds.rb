@@ -2,8 +2,7 @@ Account::Asset.create([
   { name: :accrued_interest },
   { name: :principal_receivable },
   { name: :interest_receivable },
-  { name: :pending_principal },
-  { name: :pending_interest },
+  { name: :pending_payments },
   { name: :cash },
   { name: :principal },
 ])
@@ -69,8 +68,7 @@ Txn.create(
   product_uuid: 1,
   date: payment_date,
   debits: {
-    pending_interest: interest,
-    pending_principal: principal,
+    pending_payments: payment,
   },
   credits: {
     interest_receivable: interest,
@@ -84,8 +82,7 @@ Txn.create(
   date: payment_date + 2.days,
   debits: { cash: payment },
   credits: {
-    pending_interest: interest,
-    pending_principal: principal,
+    pending_payments: payment,
   },
 )
 
@@ -117,8 +114,7 @@ Txn.create(
   product_uuid: 1,
   date: late_payment_date,
   debits: {
-    pending_interest: 1600,
-    pending_principal: 400,
+    pending_payments: 2000,
   },
   credits: {
     accrued_interest: 1400,
@@ -133,8 +129,7 @@ Txn.create(
   date: late_payment_date + 2.days,
   debits: { cash: 2000 },
   credits: {
-    pending_interest: 1600,
-    pending_principal: 400,
+    pending_payments: 2000,
   },
 )
 
@@ -197,7 +192,7 @@ t = Txn.create(
   name: "Initiate Payment",
   product_uuid: 2,
   date: Date.new(2015, 4, 1),
-  debits: { pending_principal: 7500 },
+  debits: { pending_payments: 7500 },
   credits: { principal_receivable: 7500 },
 )
 
@@ -217,7 +212,7 @@ Txn.create(
   name: "Initiate Payment",
   product_uuid: 2,
   date: Date.new(2015, 5, 1),
-  debits: { pending_principal: 7500 },
+  debits: { pending_payments: 7500 },
   credits: { principal_receivable: 7500 },
 )
 
@@ -226,7 +221,7 @@ Txn.create(
   product_uuid: 2,
   date: Date.new(2015, 5, 3),
   debits: { cash: 7500 },
-  credits: { pending_principal: 7500 },
+  credits: { pending_payments: 7500 },
 )
 
 ###################################################
@@ -332,8 +327,7 @@ initiate_pmt_1 = Txn.create(
   product_uuid: 4,
   date: Date.new(2015, 1, 1),
   debits: {
-    pending_interest: 1550,
-    pending_principal: 2000 - 1550,
+    pending_payments: 2000,
   },
   credits: {
     accrued_interest: 0,
@@ -359,8 +353,7 @@ process_pmt_1 = Txn.create(
   date: Date.new(2015, 1, 3),
   debits: { cash: 2000 },
   credits: {
-    pending_interest: 1550,
-    pending_principal: 2000 - 1550,
+    pending_payments: 2000,
   },
 )
 
@@ -379,8 +372,7 @@ initiate_pmt_2 = Txn.create(
   product_uuid: 4,
   date: Date.new(2015, 1, 5),
   debits: {
-    pending_interest: 160,
-    pending_principal: 2000 - 160,
+    pending_payments: 2000,
   },
   credits: {
     accrued_interest: 160,
@@ -395,8 +387,7 @@ process_pmt_2 = Txn.create(
   date: Date.new(2015, 1, 5),
   debits: { cash: 2000 },
   credits: {
-    pending_interest: 160,
-    pending_principal: 2000 - 160,
+    pending_payments: 2000,
   },
 )
 
@@ -425,19 +416,10 @@ end
 initiate_pmt_2.adjustments.create(
   name: "Initiate Payment Adjustment",
   debits: {
-    pending_interest: 1590,
     principal_receivable: 1590,
   },
   credits: {
     accrued_interest: 40,
     interest_receivable: 1550,
-    pending_principal: 1590,
   }
-)
-
-# Adjust payment 2 processing txn breakdown
-process_pmt_2.adjustments.create(
-  name: "Process Payment Adjustment",
-  debits: { pending_principal: 1590 },
-  credits: { pending_interest: 1590 },
 )
