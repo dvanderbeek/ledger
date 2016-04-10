@@ -37,8 +37,4 @@ class Account < ActiveRecord::Base
   def daily_balance(date_range:, for_product: nil)
     DailyBalance.new(self, date_range: date_range, for_product: for_product).calculate
   end
-
-  def debit_account?
-    !credit_account?
-  end
 end
