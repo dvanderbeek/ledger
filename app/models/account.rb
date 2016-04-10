@@ -2,6 +2,7 @@ class Account < ActiveRecord::Base
   has_many :entries
   has_many :debits, inverse_of: :account, class_name: Entry::Debit
   has_many :credits, inverse_of: :account, class_name: Entry::Credit
+  has_many :product_balances
 
   validates :name, presence: true, uniqueness: true
 
@@ -35,5 +36,9 @@ class Account < ActiveRecord::Base
 
   def daily_balance(date_range:, for_product: nil)
     DailyBalance.new(self, date_range: date_range, for_product: for_product).calculate
+  end
+
+  def debit_account?
+    !credit_account?
   end
 end

@@ -8,6 +8,8 @@ class Entry < ActiveRecord::Base
   scope :as_of, -> (date) { joins(:txn).where("date <= ?", date) }
   scope :between, -> (date_range) { joins(:txn).where(txns: { date: date_range }) }
 
+  after_create :update_product_balance
+
   delegate :date, to: :txn, prefix: true
   delegate :product_uuid, to: :txn
 
@@ -46,5 +48,13 @@ class Entry < ActiveRecord::Base
 
   def self.handle_error(metric)
     raise ArgumentError.new("Metric must be one of #{QUERIES.keys}") unless QUERIES[metric].present?
+  end
+
+  def update_product_balance
+    starting_balance = ProductBalance.where(account: account, product_uuid: product_uuid).where('date < ?', txn_date).order(:date).last.try(:amount_cents) || 0
+    ProductBalance.create_with(amount_cents: starting_balance).find_or_create_by(account: account, date: txn_date, product_uuid: product_uuid)
+    ProductBalance.where('date >= ?', txn_date)
+                  .where(account: account, product_uuid: product_uuid)
+                  .update_all("amount_cents = amount_cents + #{balance_change_cents}")
   end
 end

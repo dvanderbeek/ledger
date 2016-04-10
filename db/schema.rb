@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160403193615) do
+ActiveRecord::Schema.define(version: 20160410183810) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,18 @@ ActiveRecord::Schema.define(version: 20160403193615) do
   add_index "entries", ["account_id"], name: "index_entries_on_account_id", using: :btree
   add_index "entries", ["txn_id"], name: "index_entries_on_txn_id", using: :btree
 
+  create_table "product_balances", force: :cascade do |t|
+    t.integer  "account_id"
+    t.date     "date"
+    t.string   "product_uuid"
+    t.integer  "amount_cents", default: 0
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
+
+  add_index "product_balances", ["account_id"], name: "index_product_balances_on_account_id", using: :btree
+  add_index "product_balances", ["product_uuid"], name: "index_product_balances_on_product_uuid", using: :btree
+
   create_table "txns", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at",   null: false
@@ -51,4 +63,5 @@ ActiveRecord::Schema.define(version: 20160403193615) do
 
   add_foreign_key "entries", "accounts"
   add_foreign_key "entries", "txns"
+  add_foreign_key "product_balances", "accounts"
 end

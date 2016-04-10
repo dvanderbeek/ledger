@@ -112,12 +112,20 @@ Account.balance([:pending_payments], for_product: 2, as_of: '2015-05-01')
 # Total daily balance for multiple accounts
 Account.daily_balance([:principal, :principal_receivable], date_range: Date.new(2015,4,1)..Date.new(2015,5,5), for_product: 2)
 Account.daily_balance([:principal, :principal_receivable], date_range: Date.new(2014,12,1)..Date.new(2015,1,5), for_product: 4)
+
+# Accounts with late principal as of a specific date
+Account.principal_receivable.product_balances.by_product.positive.as_of(Date.new(2015, 2, 1))
+# Including early principal
+Account.principal_receivable.product_balances.by_product.as_of(Date.new(2015, 2, 1))
+
+# Another way to get account balances over time
+Account.principal_receivable.product_balances.where(product_uuid: 4)
 ```
 
 To Do
 -----
 
-[ ] Convert to Sinatra Service
+[ ] Need a way to get the sum of product balances for multiple accounts by product_uuid at a point in time
 
 [ ] 500k 60 month loans would create ~1.8B Book Interest rows - probably need to shard the database
 
