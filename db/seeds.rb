@@ -28,6 +28,14 @@ Txn.create(
 # EXAMPLE LOAN 1 - On time payment, then late payment (with interest)
 ###################################################
 puts "Example Loan 1"
+
+# TODO: Create MVP demo of new syntax:
+#   create :issue_loan Event
+#   with a :create_transaction Action
+#     decrease :cash
+#     increase :principal
+#   Event.named(:issue_loan).trigger(amount_cents: 200000, date: Date.new(2015, 1, 1), product_uuid: 1)
+
 Txn.create(
   name: "Issue Loan",
   product_uuid: 1,
@@ -35,6 +43,13 @@ Txn.create(
   debits: { principal: 200000 },
   credits: { cash: 200000 },
 )
+
+# TODO: Create MVP demo of new syntax:
+#   create :book_interest Event
+#   with a :create_transaction Action
+#     increase :accrued_interest
+#     increase :interest_income
+#   Event.named(:book_interest).trigger(amount_cents: 50, date: date, product_uuid: 1)
 
 (Date.new(2015, 1, 2)..Date.new(2015, 2, 1)).each do |date|
   Txn.create(
