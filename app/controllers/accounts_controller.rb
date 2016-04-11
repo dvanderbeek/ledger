@@ -44,7 +44,7 @@ class AccountsController < ApplicationController
     if @account.destroy
       redirect_to Account, notice: 'Account was successfully destroyed.'
     else
-      redirect_to Account, flash: { error: "Account could not be destroyed." }
+      redirect_to Account, flash: { error: "Accounts with ledger entries or child accounts can't be destroyed." }
     end
   end
 
