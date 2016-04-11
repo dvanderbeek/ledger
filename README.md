@@ -107,11 +107,11 @@ Account.cash.debits.for_product(1).by_day(:amount_cents)
 # Daily balance of accrued interest
 Account.accrued_interest.daily_balance(date_range: Date.new(2015, 1, 1)..Date.new(2015, 2, 5), for_product: 1)
 # Total balance for multiple accounts
-Account.balance([:interest_receivable, :principal_receivable], for_product: 1)
-Account.balance([:pending_payments], for_product: 2, as_of: '2015-05-01')
+Account.balance(:interest_receivable, :principal_receivable, for_product: 1)
+Account.balance(:pending_payments, for_product: 2, as_of: Date.new(2015, 5, 1))
 # Total daily balance for multiple accounts
-Account.daily_balance([:principal, :principal_receivable], date_range: Date.new(2015,4,1)..Date.new(2015,5,5), for_product: 2)
-Account.daily_balance([:principal, :principal_receivable], date_range: Date.new(2014,12,1)..Date.new(2015,1,5), for_product: 4)
+Account.daily_balance(:principal, :principal_receivable, date_range: Date.new(2015,4,1)..Date.new(2015,5,5), for_product: 2)
+Account.daily_balance(:principal, :principal_receivable, date_range: Date.new(2014,12,1)..Date.new(2015,1,5), for_product: 4)
 
 # Accounts that are late as of a specific date
 Account.accounts_receivable.product_balances.by_product.positive.as_of(Date.new(2015, 2, 1))
@@ -121,7 +121,7 @@ Account.accounts_receivable.product_balances.by_product.positive
 Account.accounts_receivable.product_balances.by_product.as_of(Date.new(2015, 2, 1))
 
 # Total Assets
-Account.balance(Account::Asset.all.roots.pluck(:name))
+Account.balance(Account::Asset.pluck(:name))
 ```
 
 To Do
