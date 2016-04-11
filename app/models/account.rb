@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
   end
 
   def self.balance(*names, as_of: Date.current, for_product: nil, include_subtree: nil)
-    include_subtree ||= names.flatten.count == 1 ? true : false
+    include_subtree ||= names.flatten.count == 1
     self.daily_balance(*names, date_range: as_of..as_of, for_product: for_product, include_subtree: include_subtree)[as_of]
   end
 
@@ -23,7 +23,8 @@ class Account < ActiveRecord::Base
     where(name: names).map { |account| account.balance_for_new_record(as_of: as_of, for_product: for_product) }.reduce(:+)
   end
 
-  def self.daily_balance(*names, date_range:, for_product: nil, include_subtree: true)
+  def self.daily_balance(*names, date_range: 1.month.ago.to_date..Date.current.to_date, for_product: nil, include_subtree: nil)
+    include_subtree ||= names.flatten.count == 1
     DailyBalance.new(
       Account.where(name: include_subtree ? get_subtree(names.flatten) : names.flatten),
       date_range: date_range,
