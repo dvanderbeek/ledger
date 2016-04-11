@@ -155,6 +155,16 @@ Txn.create(
   },
 )
 
+(Date.new(2015, 3, 6)..Date.new(2015, 3, 31)).each do |date|
+  Txn.create(
+    name: "Book Interest",
+    product_uuid: 1,
+    date: date,
+    debits: { accrued_interest: 40 },
+    credits: { interest_income: 40 },
+  )
+end
+
 ###################################################
 # EXAMPLE LOAN 2: Pmt Plan, apply to future
 ###################################################
