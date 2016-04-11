@@ -14,8 +14,6 @@ class Account < ActiveRecord::Base
     find_by(name: method)
   end
 
-  ### Balance methods should include sub-accounts
-
   def self.balance(names, as_of: Date.current, for_product: nil)
     where(name: names).map { |account| account.balance(as_of: as_of, for_product: for_product) }.reduce(:+)
   end
@@ -25,23 +23,26 @@ class Account < ActiveRecord::Base
   end
 
   def self.daily_balance(names, date_range:, for_product: nil)
-    DailyBalance.new(names, date_range: date_range, for_product: for_product).calculate
+    names = [names] unless names.respond_to?(:map)
+    subtree_names = names.map { |name| Account.find_by(name: name).subtree.pluck(:name) }.flatten.uniq
+    DailyBalance.new(Account.where(name: subtree_names), date_range: date_range, for_product: for_product).calculate
   end
 
   def balance(as_of: Date.current, for_product: nil)
-    entries
+    Entry.where(account: self.subtree)
       .as_of(as_of)
       .for_product(for_product)
       .net(credit_account? ? :credits : :debits)
   end
 
+  # TODO: make balance include subtree
   def balance_for_new_record(as_of: Date.current, for_product: nil)
     increasing_entries.as_of(as_of).for_product(for_product).map(&:amount_cents).reduce(0, :+) -
       decreasing_entries.as_of(as_of).for_product(for_product).map(&:amount_cents).reduce(0, :+)
   end
 
   def daily_balance(date_range:, for_product: nil)
-    DailyBalance.new(self, date_range: date_range, for_product: for_product).calculate
+    DailyBalance.new(self.subtree, date_range: date_range, for_product: for_product).calculate
   end
 
   private

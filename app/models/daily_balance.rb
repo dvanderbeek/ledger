@@ -1,8 +1,8 @@
 class DailyBalance
   attr_reader :accounts, :date_range, :for_product
 
-  def initialize(account_names, date_range:, for_product: nil)
-    @accounts = account_names.is_a?(Account) ? [account_names] : Account.where(name: account_names)
+  def initialize(accounts, date_range:, for_product: nil)
+    @accounts = accounts
     @date_range = date_range
     @for_product = for_product
   end
