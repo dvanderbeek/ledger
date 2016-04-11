@@ -1,0 +1,18 @@
+.container
+  %h1 Listing accounts
+
+  %table.table
+    %thead
+      %tr
+        %th Name
+        %th Type
+        %th
+        %th
+        %th
+
+    %tbody
+      = render 'table', accounts: @accounts.arrange
+
+  %br
+
+  = link_to 'New Account', new_account_path

@@ -1,4 +1,6 @@
 class Account < ActiveRecord::Base
+  has_ancestry cache_depth: true
+
   has_many :entries
   has_many :debits, inverse_of: :account, class_name: Entry::Debit
   has_many :credits, inverse_of: :account, class_name: Entry::Credit
@@ -6,9 +8,13 @@ class Account < ActiveRecord::Base
 
   validates :name, presence: true, uniqueness: true
 
+  before_destroy :check_for_entries
+
   def self.method_missing(method, *args, &block)
     find_by(name: method)
   end
+
+  ### Balance methods should include sub-accounts
 
   def self.balance(names, as_of: Date.current, for_product: nil)
     where(name: names).map { |account| account.balance(as_of: as_of, for_product: for_product) }.reduce(:+)
@@ -36,5 +42,14 @@ class Account < ActiveRecord::Base
 
   def daily_balance(date_range:, for_product: nil)
     DailyBalance.new(self, date_range: date_range, for_product: for_product).calculate
+  end
+
+  private
+
+  def check_for_entries
+    if entries.any? || has_children?
+      errors.add(:base, 'can not be destroyed')
+      false
+    end
   end
 end

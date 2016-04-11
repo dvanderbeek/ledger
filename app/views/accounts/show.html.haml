@@ -1,0 +1,6 @@
+.container
+  %h4= @account.name
+  %h4= @account.type.demodulize
+  = link_to 'Edit', edit_account_path(@account)
+  \|
+  = link_to 'Back', accounts_path

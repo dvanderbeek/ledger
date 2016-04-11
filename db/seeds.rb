@@ -1,7 +1,9 @@
+ar = Account::Asset.create(name: :accounts_receivable)
+
 Account::Asset.create([
   { name: :accrued_interest },
-  { name: :principal_receivable },
-  { name: :interest_receivable },
+  { name: :principal_receivable, parent: ar },
+  { name: :interest_receivable, parent: ar },
   { name: :pending_payments },
   { name: :cash },
   { name: :principal },

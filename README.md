@@ -113,13 +113,12 @@ Account.balance([:pending_payments], for_product: 2, as_of: '2015-05-01')
 Account.daily_balance([:principal, :principal_receivable], date_range: Date.new(2015,4,1)..Date.new(2015,5,5), for_product: 2)
 Account.daily_balance([:principal, :principal_receivable], date_range: Date.new(2014,12,1)..Date.new(2015,1,5), for_product: 4)
 
-# Accounts with late principal as of a specific date
-Account.principal_receivable.product_balances.by_product.positive.as_of(Date.new(2015, 2, 1))
-# Including early principal
-Account.principal_receivable.product_balances.by_product.as_of(Date.new(2015, 2, 1))
-
-# Another way to get account balances over time
-Account.principal_receivable.product_balances.where(product_uuid: 4)
+# Accounts that are late as of a specific date
+Account.accounts_receivable.product_balances.by_product.positive.as_of(Date.new(2015, 2, 1))
+# As of today
+Account.accounts_receivable.product_balances.by_product.positive
+# Late or early
+Account.accounts_receivable.product_balances.by_product.as_of(Date.new(2015, 2, 1))
 ```
 
 To Do

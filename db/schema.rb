@@ -11,17 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160410183810) do
+ActiveRecord::Schema.define(version: 20160410230928) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.string   "type"
+    t.string   "ancestry"
+    t.integer  "ancestry_depth", default: 0
   end
+
+  add_index "accounts", ["ancestry"], name: "index_accounts_on_ancestry", using: :btree
 
   create_table "entries", force: :cascade do |t|
     t.integer  "account_id"

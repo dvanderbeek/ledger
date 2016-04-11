@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.1.2'
 
-gem 'airbrake'
+# gem 'airbrake'
 gem 'bourbon', '~> 3.2.1'
 gem 'coffee-rails'
 gem 'sidekiq'
@@ -23,6 +23,8 @@ gem 'unicorn'
 gem 'leather', github: 'dvanderbeek/leather', branch: 'master'
 gem 'font-awesome-sass'
 gem 'autoprefixer-rails'
+
+gem 'ancestry'
 
 group :development do
   gem 'foreman'
