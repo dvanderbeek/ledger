@@ -32,8 +32,8 @@ puts "Example Loan 1"
 # TODO: Create MVP demo of new syntax:
 #   create :issue_loan Event
 #   with a :create_transaction Action
-#     decrease :cash, amount_cents
-#     increase :principal, amount_cents
+#     debit  :principal
+#     credit :cash
 #   Event.named(:issue_loan).trigger(amount_cents: 200000, date: Date.new(2015, 1, 1), product_uuid: 1)
 
 Txn.create(
@@ -47,8 +47,8 @@ Txn.create(
 # TODO: Create MVP demo of new syntax:
 #   create :book_interest Event
 #   with a :create_transaction Action
-#     increase :accrued_interest, amount_cents
-#     increase :interest_income, amount_cents
+#     debit  :accrued_interest
+#     credit :interest_income
 #   Event.named(:book_interest).trigger(amount_cents: 50, date: date, product_uuid: 1)
 
 (Date.new(2015, 1, 2)..Date.new(2015, 2, 1)).each do |date|
@@ -65,8 +65,8 @@ end
 #   create :book_installment Event
 #   with a :create_transaction Action
 #     with a waterfall
-#       from accrued_interest -> to interest_receivable
-#       from principal        -> to principal_receivable
+#       from accrued_interest -> to interest_receivable (up to balance of accrued_interest)
+#       from principal        -> to principal_receivable (up to remainder)
 #   Event.named(:book_installment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 1), product_uuid: 1)
 
 payment_date = Date.new(2015, 2, 1)
