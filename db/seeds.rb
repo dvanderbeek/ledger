@@ -32,8 +32,8 @@ puts "Example Loan 1"
 # TODO: Create MVP demo of new syntax:
 #   create :issue_loan Event
 #   with a :create_transaction Action
-#     debit  :principal
-#     credit :cash
+#     with a waterfall
+#       from cash -> principal (full amount)
 #   Event.named(:issue_loan).trigger(amount_cents: 200000, date: Date.new(2015, 1, 1), product_uuid: 1)
 
 Txn.create(
@@ -65,8 +65,8 @@ end
 #   create :book_installment Event
 #   with a :create_transaction Action
 #     with a waterfall
-#       from accrued_interest -> to interest_receivable (up to balance of accrued_interest)
-#       from principal        -> to principal_receivable (up to remainder)
+#       from accrued_interest -> interest_receivable (up to balance of accrued_interest)
+#       from principal        -> principal_receivable (up to remainder)
 #   Event.named(:book_installment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 1), product_uuid: 1)
 
 payment_date = Date.new(2015, 2, 1)
@@ -92,9 +92,9 @@ Txn.create(
 #   create :initiate_payment Event
 #   with a :create_transaction Action
 #     with a waterfall
-#       from accrued_interest     -> to pending_payments (up to balance of accrued_interest)
-#       from interest_receivable  -> to pending_payments (up to balance of interest_receivable)
-#       from principal_receivable -> to pending_payments (up to remainder)
+#       from accrued_interest     -> pending_payments (up to balance of accrued_interest)
+#       from interest_receivable  -> pending_payments (up to balance of interest_receivable)
+#       from principal_receivable -> pending_payments (up to remainder)
 #   Event.named(:initiate_payment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 1), product_uuid: 1)
 
 Txn.create(
@@ -115,8 +115,8 @@ Txn.create(
 #   create :process_payment Event
 #   with a :create_transaction Action
 #     with a waterfall
-#       from pending_payments     -> to cash (up to balance of pending_payments)
-#       from principal_receivable -> to cash (up to remainder)
+#       from pending_payments     -> cash (up to balance of pending_payments)
+#       from principal_receivable -> cash (up to remainder)
 #   Event.named(:process_payment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 3), product_uuid: 1)
 
 Txn.create(
