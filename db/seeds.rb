@@ -65,8 +65,8 @@ end
 #   create :book_installment Event
 #   with a :create_transaction Action
 #     with a waterfall
-#       accrued_interest -> interest_receivable
-#       principal -> principal_receivable
+#       from accrued_interest -> to interest_receivable
+#       from principal        -> to principal_receivable
 #   Event.named(:book_installment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 1), product_uuid: 1)
 
 payment_date = Date.new(2015, 2, 1)
