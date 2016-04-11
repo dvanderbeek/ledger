@@ -88,6 +88,15 @@ Txn.create(
   },
 )
 
+# TODO: Create MVP demo of new syntax:
+#   create :initiate_payment Event
+#   with a :create_transaction Action
+#     with a waterfall
+#       from accrued_interest     -> to pending_payments (up to balance of accrued_interest)
+#       from interest_receivable  -> to pending_payments (up to balance of interest_receivable)
+#       from principal_receivable -> to pending_payments (up to remainder)
+#   Event.named(:initiate_payment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 1), product_uuid: 1)
+
 Txn.create(
   name: "Initiate Payment",
   product_uuid: 1,
@@ -96,10 +105,19 @@ Txn.create(
     pending_payments: payment,
   },
   credits: {
+    accrued_interest: 0,
     interest_receivable: interest,
     principal_receivable: principal,
   }
 )
+
+# TODO: Create MVP demo of new syntax:
+#   create :process_payment Event
+#   with a :create_transaction Action
+#     with a waterfall
+#       from pending_payments     -> to cash (up to balance of pending_payments)
+#       from principal_receivable -> to cash (up to remainder)
+#   Event.named(:process_payment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 3), product_uuid: 1)
 
 Txn.create(
   name: "Process Payment",
