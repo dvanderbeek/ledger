@@ -128,8 +128,6 @@ Account.daily_balance(Account::Asset.pluck(:name))
 To Do
 -----
 
-[ ] Need a way to get the sum of product balances for multiple accounts by product_uuid at a point in time
-
 [ ] 500k 60 month loans would create ~1.8B Book Interest rows - probably need to shard the database
 
 Client
