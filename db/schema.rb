@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160411145657) do
+ActiveRecord::Schema.define(version: 20160411230911) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,15 @@ ActiveRecord::Schema.define(version: 20160411145657) do
 
   add_index "accounts", ["ancestry"], name: "index_accounts_on_ancestry", using: :btree
 
+  create_table "actions", force: :cascade do |t|
+    t.integer  "event_id"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "actions", ["event_id"], name: "index_actions_on_event_id", using: :btree
+
   create_table "entries", force: :cascade do |t|
     t.integer  "account_id"
     t.decimal  "amount_cents"
@@ -39,6 +48,12 @@ ActiveRecord::Schema.define(version: 20160411145657) do
 
   add_index "entries", ["account_id"], name: "index_entries_on_account_id", using: :btree
   add_index "entries", ["txn_id"], name: "index_entries_on_txn_id", using: :btree
+
+  create_table "events", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "product_balances", force: :cascade do |t|
     t.integer  "account_id"
@@ -66,7 +81,22 @@ ActiveRecord::Schema.define(version: 20160411145657) do
   add_index "txns", ["parent_id"], name: "index_txns_on_parent_id", using: :btree
   add_index "txns", ["product_uuid"], name: "index_txns_on_product_uuid", using: :btree
 
+  create_table "waterfalls", force: :cascade do |t|
+    t.integer  "action_id"
+    t.integer  "order"
+    t.integer  "from_account_id"
+    t.integer  "to_account_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "waterfalls", ["action_id"], name: "index_waterfalls_on_action_id", using: :btree
+  add_index "waterfalls", ["from_account_id"], name: "index_waterfalls_on_from_account_id", using: :btree
+  add_index "waterfalls", ["to_account_id"], name: "index_waterfalls_on_to_account_id", using: :btree
+
+  add_foreign_key "actions", "events"
   add_foreign_key "entries", "accounts"
   add_foreign_key "entries", "txns"
   add_foreign_key "product_balances", "accounts"
+  add_foreign_key "waterfalls", "actions"
 end

@@ -17,6 +17,10 @@ Account::Equity.create([
   { name: :equity },
 ])
 
+event = Event.create(name: :issue_loan)
+action = event.actions.create(name: :create_txn)
+action.waterfalls.create(from_account: Account.cash, to_account: Account.principal, order: 0)
+
 Txn.create(
   name: "Initial Funding",
   date: Date.new(2014, 1, 1),
@@ -29,20 +33,7 @@ Txn.create(
 ###################################################
 puts "Example Loan 1"
 
-# TODO: Create proof of concept Event/Action system:
-#   create :issue_loan Event
-#   with a :create_transaction Action
-#     with a waterfall
-#       from cash -> principal (full amount)
-#   Event.named(:issue_loan).trigger(amount_cents: 200000, date: Date.new(2015, 1, 1), product_uuid: 1)
-
-Txn.create(
-  name: "Issue Loan",
-  product_uuid: 1,
-  date: Date.new(2015, 1, 1),
-  debits: { principal: 200000 },
-  credits: { cash: 200000 },
-)
+Event.named(:issue_loan).trigger(amount_cents: 200000, date: Date.new(2015, 1, 1), product_uuid: 1)
 
 # TODO: Create proof of concept Event/Action system:
 #   create :book_interest Event
@@ -210,13 +201,7 @@ end
 # EXAMPLE LOAN 2: Pmt Plan, apply to future
 ###################################################
 puts "Example Loan 2"
-Txn.create(
-  name: "Issue Loan",
-  product_uuid: 2,
-  date: Date.new(2014, 12, 1),
-  debits: { principal: 40000 },
-  credits: { cash: 40000 },
-)
+Event.named(:issue_loan).trigger(amount_cents: 40000, date: Date.new(2014, 12, 1), product_uuid: 2)
 
 t = Txn.create(
   name: "Book Installment",
@@ -301,13 +286,7 @@ Txn.create(
 # EXAMPLE LOAN 3: Pmt Plan, DO NOT apply to future, miss payments
 ###################################################
 puts "Example Loan 3"
-Txn.create(
-  name: "Issue Loan",
-  product_uuid: 3,
-  date: Date.new(2014, 12, 1),
-  debits: { principal: 40000 },
-  credits: { cash: 40000 },
-)
+Event.named(:issue_loan).trigger(amount_cents: 40000, date: Date.new(2014, 12, 1), product_uuid: 3)
 
 t = Txn.create(
   name: "Book Installment",
@@ -363,13 +342,7 @@ Txn.create(
 # EXAMPLE LOAN 4: Pmt 1, Pmt 2, Pmt 1 Returns
 ###################################################
 puts "Example Loan 4"
-Txn.create(
-  name: "Issue Loan",
-  product_uuid: 4,
-  date: Date.new(2014, 12, 1),
-  debits: { principal: 200000 },
-  credits: { cash: 200000 },
-)
+Event.named(:issue_loan).trigger(amount_cents: 200000, date: Date.new(2014, 12, 1), product_uuid: 4)
 
 (Date.new(2014, 12, 2)..Date.new(2015, 1, 1)).each do |date|
   Txn.create(
