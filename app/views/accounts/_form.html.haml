@@ -3,8 +3,10 @@
 
   .form-inputs
     = f.input :name
-    = f.input :parent_id, as: :select, collection: Account.order(:name)
-    = f.input :type
+    - if @account.new_record?
+      = f.input :parent_id, as: :select, collection: Account.order(:name)
+      = f.input :type, as: :select, collection: %w[Account::Asset Account::Equity Account::Expense Account::Liability Account::Revenue], label_method: :demodulize, include_blank: false
 
   .form-actions
-    = f.submit "Save", class: "btn btn-primary"
+    = f.submit 'Save', class: 'btn btn-primary'
+    = link_to 'Cancel', Account, class: 'btn btn-link'

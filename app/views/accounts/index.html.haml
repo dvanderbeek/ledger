@@ -1,18 +1,27 @@
 .container
-  %h1 Listing accounts
+  %h1 Chart of Accounts
 
   %table.table
     %thead
       %tr
         %th Name
         %th Type
-        %th
+        %th Balance
         %th
         %th
 
     %tbody
-      = render 'table', accounts: @accounts.arrange
+      = render 'table', accounts: @accounts
 
-  %br
+  %p Cash + Principal + Principal Receivable = Equity + Interest Income
 
-  = link_to 'New Account', new_account_path
+  = link_to 'New Account', [:new, :account], class: 'btn btn-success'
+
+  %h4 Late Products
+  %table.table
+    %thead
+      %tr
+        %th Product UUID
+        %th Accounts Receivable Balance
+    %tbody
+      = render Account.accounts_receivable.product_balances.by_product.positive

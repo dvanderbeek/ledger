@@ -36,7 +36,7 @@ Txn.create(
   credits: { cash: 200000 },
 )
 
-(Date.new(2015, 1, 2)..Date.new(2015, 3, 15)).each do |date|
+(Date.new(2015, 1, 2)..Date.new(2015, 2, 1)).each do |date|
   Txn.create(
     name: "Book Interest",
     product_uuid: 1,
@@ -83,45 +83,65 @@ Txn.create(
   product_uuid: 1,
   date: payment_date + 2.days,
   debits: { cash: payment },
-  credits: {
-    pending_payments: payment,
-  },
+  credits: { pending_payments: payment },
 )
+
+(Date.new(2015, 2, 2)..Date.new(2015, 3, 1)).each do |date|
+  Txn.create(
+    name: "Book Interest",
+    product_uuid: 1,
+    date: date,
+    debits: { accrued_interest: 40 },
+    credits: { interest_income: 40 },
+  )
+end
 
 installment_date = Date.new(2015, 3, 1)
 late_payment_date = Date.new(2015, 3, 5)
-# payment = 2000
-# interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: installment_date) # 1400
-# principal = payment - interest # 600
+payment = 2000
+interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: installment_date) # 1120
+principal = payment - interest # 880
+
 Txn.create(
   name: "Book Installment",
   product_uuid: 1,
   date: installment_date,
   debits: {
-    interest_receivable: 1400,
-    principal_receivable: 600,
+    interest_receivable: interest,
+    principal_receivable: principal,
   },
   credits: {
-    accrued_interest: 1400,
-    principal: 600,
+    accrued_interest: interest,
+    principal: principal,
   },
 )
 
-# accrued_interest = Account.balance(:accrued_interest, for_product: 1, as_of: late_payment_date) # 1400
-# interest_receivable = Account.balance(:interest_receivable, for_product: 1, as_of: late_payment_date) # 200
-# total_interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: late_payment_date) # 1600
-# principal = payment - total_interest # 400
+(Date.new(2015, 3, 2)..Date.new(2015, 3, 5)).each do |date|
+  Txn.create(
+    name: "Book Interest",
+    product_uuid: 1,
+    date: date,
+    debits: { accrued_interest: 50 },
+    credits: { interest_income: 50 },
+  )
+end
+
+accrued_interest = Account.balance(:accrued_interest, for_product: 1, as_of: late_payment_date) # 200
+interest_receivable = Account.balance(:interest_receivable, for_product: 1, as_of: late_payment_date) # 1120
+total_interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: late_payment_date) # 1320
+principal = payment - total_interest # 680
+
 Txn.create(
   name: "Initiate Payment",
   product_uuid: 1,
   date: late_payment_date,
   debits: {
-    pending_payments: 2000,
+    pending_payments: payment,
   },
   credits: {
-    accrued_interest: 1400,
-    interest_receivable: 200,
-    principal_receivable: 400,
+    accrued_interest: accrued_interest,
+    interest_receivable: interest_receivable,
+    principal_receivable: principal,
   }
 )
 
@@ -129,9 +149,9 @@ Txn.create(
   name: "Process Payment",
   product_uuid: 1,
   date: late_payment_date + 2.days,
-  debits: { cash: 2000 },
+  debits: { cash: payment },
   credits: {
-    pending_payments: 2000,
+    pending_payments: payment,
   },
 )
 

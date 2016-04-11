@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
 
   def check_for_entries
     if entries.any? || has_children?
-      errors.add(:base, 'can not be destroyed')
+      errors.add(:base, 'can not be modified')
       false
     end
   end

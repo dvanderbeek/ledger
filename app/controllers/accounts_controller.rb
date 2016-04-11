@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
 
   # GET /accounts
   def index
-    @accounts = Account.order(:type, :name)
+    @accounts = Account.includes(:entries).arrange(order: 'type, name')
   end
 
   # GET /accounts/1
@@ -24,7 +24,7 @@ class AccountsController < ApplicationController
     @account = Account.new(account_params)
 
     if @account.save
-      redirect_to @account, notice: 'Account was successfully created.'
+      redirect_to Account, notice: 'Account was successfully created.'
     else
       render :new
     end
@@ -33,7 +33,7 @@ class AccountsController < ApplicationController
   # PATCH/PUT /accounts/1
   def update
     if @account.update(account_params)
-      redirect_to @account, notice: 'Account was successfully updated.'
+      redirect_to Account, notice: 'Account was successfully updated.'
     else
       render :edit
     end
@@ -42,9 +42,9 @@ class AccountsController < ApplicationController
   # DELETE /accounts/1
   def destroy
     if @account.destroy
-      redirect_to accounts_url, notice: 'Account was successfully destroyed.'
+      redirect_to Account, notice: 'Account was successfully destroyed.'
     else
-      redirect_to accounts_url, flash: { error: "Account could not be destroyed." }
+      redirect_to Account, flash: { error: "Account could not be destroyed." }
     end
   end
 
