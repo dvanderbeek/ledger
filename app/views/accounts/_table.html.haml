@@ -4,7 +4,7 @@
       %span{style: "padding-left: #{15 * account.ancestry_depth}px;"}
         = account.name.titleize
     %td= account.type.demodulize
-    %td= number_to_currency account.balance / 100
+    %td= number_to_currency account.balance_cents.to_f / 100
     %td= link_to 'Edit', edit_account_path(account)
     %td= link_to 'Destroy', account_path(account), :method => :delete, :data => { :confirm => 'Are you sure?' }
   = render 'table', accounts: children if children.present?

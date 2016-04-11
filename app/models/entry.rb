@@ -51,6 +51,7 @@ class Entry < ActiveRecord::Base
   end
 
   def cache_balances
+    account.path.update_all("balance_cents = balance_cents + #{balance_change_cents}")
     account.path.each do |account|
       starting_balance = ProductBalance.where(account: account, product_uuid: product_uuid).where('date < ?', txn_date).order(:date).last.try(:amount_cents) || 0
       ProductBalance.create_with(amount_cents: starting_balance).find_or_create_by(account: account, date: txn_date, product_uuid: product_uuid)

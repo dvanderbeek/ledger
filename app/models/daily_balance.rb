@@ -29,9 +29,13 @@ class DailyBalance
 
   def starting_balance
     @starting_balance ||= accounts.map do |account|
-      net_credits_by_day[account.id].map do |date, amount|
-        date < date_range.first ? amount * account.credit_multiplier : 0
-      end.reduce(0, :+)
+      if net_credits_by_day[account.id]
+        net_credits_by_day[account.id].map do |date, amount|
+          date < date_range.first ? amount * account.credit_multiplier : 0
+        end.reduce(0, :+)
+      else
+        0
+      end
     end.reduce(0, :+)
   end
 end

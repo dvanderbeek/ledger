@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160410230928) do
+ActiveRecord::Schema.define(version: 20160411145657) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20160410230928) do
     t.string   "type"
     t.string   "ancestry"
     t.integer  "ancestry_depth", default: 0
+    t.integer  "balance_cents",  default: 0
   end
 
   add_index "accounts", ["ancestry"], name: "index_accounts_on_ancestry", using: :btree
