@@ -1,4 +1,5 @@
 class AccountsController < ApplicationController
+  set_tab :accounts, :main
   before_action :set_account, only: [:show, :edit, :update, :destroy]
 
   # GET /accounts
