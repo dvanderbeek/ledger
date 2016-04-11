@@ -119,6 +119,9 @@ Account.accounts_receivable.product_balances.by_product.positive.as_of(Date.new(
 Account.accounts_receivable.product_balances.by_product.positive
 # Late or early
 Account.accounts_receivable.product_balances.by_product.as_of(Date.new(2015, 2, 1))
+
+# Total Assets
+Account.balance(Account::Asset.all.roots.pluck(:name))
 ```
 
 To Do
