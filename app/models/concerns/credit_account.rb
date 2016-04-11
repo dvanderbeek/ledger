@@ -16,6 +16,6 @@ module CreditAccount
   end
 
   def debit_account?
-    false
+    !credit_account?
   end
 end

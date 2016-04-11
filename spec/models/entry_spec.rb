@@ -14,8 +14,8 @@ RSpec.describe Entry, type: :model do
 
   describe ".for_product" do
     before do
-      create(:account, name: :accounts_receivable)
-      create(:account, name: :interest_income)
+      create(:account, name: :accounts_receivable, type: "Account::Asset")
+      create(:account, name: :interest_income, type: "Account::Revenue")
     end
 
     it "returns the correct records" do
@@ -40,8 +40,8 @@ RSpec.describe Entry, type: :model do
 
   describe ".as_of" do
     before do
-      create(:account, name: :accounts_receivable)
-      create(:account, name: :interest_income)
+      create(:account, name: :accounts_receivable, type: "Account::Asset")
+      create(:account, name: :interest_income, type: "Account::Revenue")
     end
 
     it "returns the correct records" do
