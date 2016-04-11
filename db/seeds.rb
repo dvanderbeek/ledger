@@ -126,8 +126,8 @@ Txn.create(
   )
 end
 
-accrued_interest = Account.balance(:accrued_interest, for_product: 1, as_of: late_payment_date) # 200
 interest_receivable = Account.balance(:interest_receivable, for_product: 1, as_of: late_payment_date) # 1120
+accrued_interest = Account.balance(:accrued_interest, for_product: 1, as_of: late_payment_date) # 200
 total_interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: late_payment_date) # 1320
 principal = payment - total_interest # 680
 
