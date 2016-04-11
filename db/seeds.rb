@@ -29,7 +29,7 @@ Txn.create(
 ###################################################
 puts "Example Loan 1"
 
-# TODO: Create MVP demo of new syntax:
+# TODO: Create proof of concept Event/Action system:
 #   create :issue_loan Event
 #   with a :create_transaction Action
 #     with a waterfall
@@ -44,7 +44,7 @@ Txn.create(
   credits: { cash: 200000 },
 )
 
-# TODO: Create MVP demo of new syntax:
+# TODO: Create proof of concept Event/Action system:
 #   create :book_interest Event
 #   with a :create_transaction Action
 #     debit  :accrued_interest
@@ -61,7 +61,7 @@ Txn.create(
   )
 end
 
-# TODO: Create MVP demo of new syntax:
+# TODO: Create proof of concept Event/Action system:
 #   create :book_installment Event
 #   with a :create_transaction Action
 #     with a waterfall
@@ -88,7 +88,7 @@ Txn.create(
   },
 )
 
-# TODO: Create MVP demo of new syntax:
+# TODO: Create proof of concept Event/Action system:
 #   create :initiate_payment Event
 #   with a :create_transaction Action
 #     with a waterfall
@@ -111,7 +111,7 @@ Txn.create(
   }
 )
 
-# TODO: Create MVP demo of new syntax:
+# TODO: Create proof of concept Event/Action system:
 #   create :process_payment Event
 #   with a :create_transaction Action
 #     with a waterfall
