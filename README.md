@@ -122,6 +122,7 @@ Account.accounts_receivable.product_balances.by_product.as_of(Date.new(2015, 2, 
 
 # Total Assets
 Account.balance(Account::Asset.pluck(:name))
+Account.daily_balance(Account::Asset.pluck(:name))
 ```
 
 To Do
