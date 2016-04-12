@@ -7,7 +7,7 @@ class Waterfall < ActiveRecord::Base
   default_scope { order(:order) }
 
   def trigger(amount_cents, inputs)
-    balance = from_account.balance(as_of: inputs[:date], for_product: scope_balance_to_product? ? inputs[:product_uuid] : nil)
+    balance = from_account.balance(as_of: inputs[:date], for_product: inputs[:product_uuid])
     amount_to_allocate = [balance, amount_cents].min
     Txn.create(
       name: action.event.name,
