@@ -18,8 +18,26 @@ Account::Equity.create([
 ])
 
 event = Event.create(name: :issue_loan)
-action = event.actions.create(name: :create_txn)
-action.waterfalls.create(from_account: Account.cash, to_account: Account.principal, order: 0)
+action = Action::CreateTxn.create(event: event, name: :create_txn, credit_account: Account.cash, debit_account: Account.principal)
+
+event = Event.create(name: :book_interest)
+action = Action::CreateTxn.create(event: event, name: :create_txn, credit_account: Account.interest_income, debit_account: Account.accrued_interest)
+
+event = Event.create(name: :book_installment)
+action = Action::CreateWaterfallTxn.create(event: event, name: :create_txn)
+action.waterfalls.create(credit_account: Account.accrued_interest, debit_account: Account.interest_receivable, order: 0, from_account: Account.accrued_interest)
+action.waterfalls.create(credit_account: Account.principal, debit_account: Account.principal_receivable, order: 1, from_account: Account.principal)
+
+event = Event.create(name: :initiate_payment)
+action = Action::CreateWaterfallTxn.create(event: event, name: :create_txn)
+action.waterfalls.create(credit_account: Account.accrued_interest, debit_account: Account.pending_payments, order: 0, from_account: Account.accrued_interest)
+action.waterfalls.create(credit_account: Account.interest_receivable, debit_account: Account.pending_payments, order: 1, from_account: Account.interest_receivable)
+action.waterfalls.create(credit_account: Account.principal_receivable, debit_account: Account.pending_payments, order: 1, from_account: Account.principal_receivable)
+
+event = Event.create(name: :process_payment)
+action = Action::CreateWaterfallTxn.create(event: event, name: :create_txn)
+action.waterfalls.create(credit_account: Account.pending_payments, debit_account: Account.cash, order: 0, from_account: Account.pending_payments)
+action.waterfalls.create(credit_account: Account.principal_receivable, debit_account: Account.cash, order: 1, from_account: Account.principal_receivable)
 
 Txn.create(
   name: "Initial Funding",
@@ -35,166 +53,29 @@ puts "Example Loan 1"
 
 Event.named(:issue_loan).trigger(amount_cents: 200000, date: Date.new(2015, 1, 1), product_uuid: 1)
 
-# TODO: Create proof of concept Event/Action system:
-#   create :book_interest Event
-#   with a :create_transaction Action
-#     debit  :accrued_interest
-#     credit :interest_income
-#   Event.named(:book_interest).trigger(amount_cents: 50, date: date, product_uuid: 1)
-
 (Date.new(2015, 1, 2)..Date.new(2015, 2, 1)).each do |date|
-  Txn.create(
-    name: "Book Interest",
-    product_uuid: 1,
-    date: date,
-    debits: { accrued_interest: 50 },
-    credits: { interest_income: 50 },
-  )
+  Event.named(:book_interest).trigger(amount_cents: 50, date: date, product_uuid: 1)
 end
 
-# TODO: Create proof of concept Event/Action system:
-#   create :book_installment Event
-#   with a :create_transaction Action
-#     with a waterfall
-#       from accrued_interest -> interest_receivable (up to balance of accrued_interest)
-#       from principal        -> principal_receivable (up to remainder)
-#   Event.named(:book_installment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 1), product_uuid: 1)
-
-payment_date = Date.new(2015, 2, 1)
-payment = 2000.to_d
-interest = Account.accrued_interest.balance(for_product: 1, as_of: payment_date)
-principal = payment - interest
-
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 1,
-  date: payment_date,
-  debits: {
-    interest_receivable: interest,
-    principal_receivable: principal,
-  },
-  credits: {
-    accrued_interest: interest,
-    principal: principal,
-  },
-)
-
-# TODO: Create proof of concept Event/Action system:
-#   create :initiate_payment Event
-#   with a :create_transaction Action
-#     with a waterfall
-#       from accrued_interest     -> pending_payments (up to balance of accrued_interest)
-#       from interest_receivable  -> pending_payments (up to balance of interest_receivable)
-#       from principal_receivable -> pending_payments (up to remainder)
-#   Event.named(:initiate_payment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 1), product_uuid: 1)
-
-Txn.create(
-  name: "Initiate Payment",
-  product_uuid: 1,
-  date: payment_date,
-  debits: {
-    pending_payments: payment,
-  },
-  credits: {
-    accrued_interest: 0,
-    interest_receivable: interest,
-    principal_receivable: principal,
-  }
-)
-
-# TODO: Create proof of concept Event/Action system:
-#   create :process_payment Event
-#   with a :create_transaction Action
-#     with a waterfall
-#       from pending_payments     -> cash (up to balance of pending_payments)
-#       from principal_receivable -> cash (up to remainder)
-#   Event.named(:process_payment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 3), product_uuid: 1)
-
-Txn.create(
-  name: "Process Payment",
-  product_uuid: 1,
-  date: payment_date + 2.days,
-  debits: { cash: payment },
-  credits: { pending_payments: payment },
-)
+Event.named(:book_installment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 1), product_uuid: 1)
+Event.named(:initiate_payment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 1), product_uuid: 1)
+Event.named(:process_payment).trigger(amount_cents: 2000, date: Date.new(2015, 2, 3), product_uuid: 1)
 
 (Date.new(2015, 2, 2)..Date.new(2015, 3, 1)).each do |date|
-  Txn.create(
-    name: "Book Interest",
-    product_uuid: 1,
-    date: date,
-    debits: { accrued_interest: 40 },
-    credits: { interest_income: 40 },
-  )
+  Event.named(:book_interest).trigger(amount_cents: 40, date: date, product_uuid: 1)
 end
 
-installment_date = Date.new(2015, 3, 1)
-late_payment_date = Date.new(2015, 3, 5)
-payment = 2000
-interest = Account.balance([:accrued_interest, :interest_receivable], for_product: 1, as_of: installment_date) # 1120
-principal = payment - interest # 880
-
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 1,
-  date: installment_date,
-  debits: {
-    interest_receivable: interest,
-    principal_receivable: principal,
-  },
-  credits: {
-    accrued_interest: interest,
-    principal: principal,
-  },
-)
+Event.named(:book_installment).trigger(amount_cents: 2000, date: Date.new(2015, 3, 1), product_uuid: 1)
 
 (Date.new(2015, 3, 2)..Date.new(2015, 3, 5)).each do |date|
-  Txn.create(
-    name: "Book Interest",
-    product_uuid: 1,
-    date: date,
-    debits: { accrued_interest: 50 },
-    credits: { interest_income: 50 },
-  )
+  Event.named(:book_interest).trigger(amount_cents: 50, date: date, product_uuid: 1)
 end
 
-interest_receivable = Account.balance(:interest_receivable, for_product: 1, as_of: late_payment_date) # 1120
-accrued_interest = Account.balance(:accrued_interest, for_product: 1, as_of: late_payment_date) # 200
-total_interest = interest_receivable + accrued_interest
-principal = payment - total_interest # 680
-
-Txn.create(
-  name: "Initiate Payment",
-  product_uuid: 1,
-  date: late_payment_date,
-  debits: {
-    pending_payments: payment,
-  },
-  credits: {
-    accrued_interest: accrued_interest,
-    interest_receivable: interest_receivable,
-    principal_receivable: principal,
-  }
-)
-
-Txn.create(
-  name: "Process Payment",
-  product_uuid: 1,
-  date: late_payment_date + 2.days,
-  debits: { cash: payment },
-  credits: {
-    pending_payments: payment,
-  },
-)
+Event.named(:initiate_payment).trigger(amount_cents: 2000, date: Date.new(2015, 3, 5), product_uuid: 1)
+Event.named(:process_payment).trigger(amount_cents: 2000, date: Date.new(2015, 3, 5), product_uuid: 1)
 
 (Date.new(2015, 3, 6)..Date.new(2015, 3, 31)).each do |date|
-  Txn.create(
-    name: "Book Interest",
-    product_uuid: 1,
-    date: date,
-    debits: { accrued_interest: 40 },
-    credits: { interest_income: 40 },
-  )
+  Event.named(:book_interest).trigger(amount_cents: 40, date: date, product_uuid: 1)
 end
 
 ###################################################
