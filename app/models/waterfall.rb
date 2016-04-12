@@ -6,9 +6,10 @@ class Waterfall < ActiveRecord::Base
 
   default_scope { order(:order) }
 
-  def trigger(amount_cents, inputs)
+  def trigger(amount_cents, inputs, final)
     @amount_cents = amount_cents
     @inputs = inputs
+    @final = final
     Txn.create(
       name: action.event.name,
       product_uuid: inputs[:product_uuid],
@@ -19,15 +20,17 @@ class Waterfall < ActiveRecord::Base
     return amount_to_allocate
   end
 
-  def balance
-    @balance ||= if self == action.waterfalls.last
+  private
+
+  def amount_to_allocate
+    @amount_to_allocate ||= if @final
       @amount_cents
     else
-      from_account.balance(as_of: @inputs[:date], for_product: @inputs[:product_uuid])
+      [balance, @amount_cents].min
     end
   end
 
-  def amount_to_allocate
-    @amount_to_allocate ||= [balance, @amount_cents].min
+  def balance
+    @balance ||= from_account.balance(as_of: @inputs[:date], for_product: @inputs[:product_uuid])
   end
 end
