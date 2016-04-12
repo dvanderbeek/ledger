@@ -95,37 +95,10 @@ t = Txn.create(
 t.reversals.create(name: "Start Payment Plan")
 
 # Early Payment
-Txn.create(
-  name: "Process Payment",
-  product_uuid: 2,
-  date: Date.new(2015, 1, 15),
-  debits: { cash: 15000 },
-  credits: { principal_receivable: 15000 },
-)
-
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 2,
-  date: Date.new(2015, 2, 1),
-  debits: { principal_receivable: 7500 },
-  credits: { principal: 7500 },
-)
-
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 2,
-  date: Date.new(2015, 3, 1),
-  debits: { principal_receivable: 7500 },
-  credits: { principal: 7500 },
-)
-
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 2,
-  date: Date.new(2015, 4, 1),
-  debits: { principal_receivable: 7500 },
-  credits: { principal: 7500 },
-)
+Event.named(:process_payment).trigger(amount_cents: 15000, date: Date.new(2015, 1, 15), product_uuid: 2)
+Event.named(:book_installment).trigger(amount_cents: 7500, date: Date.new(2015, 2, 1), product_uuid: 2)
+Event.named(:book_installment).trigger(amount_cents: 7500, date: Date.new(2015, 3, 1), product_uuid: 2)
+Event.named(:book_installment).trigger(amount_cents: 7500, date: Date.new(2015, 4, 1), product_uuid: 2)
 
 t = Txn.create(
   name: "Initiate Payment",
@@ -139,29 +112,9 @@ t = Txn.create(
 #   also need to reverse the process payment Txn.
 t.reversals.create(name: "Payment Return")
 
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 2,
-  date: Date.new(2015, 5, 1),
-  debits: { principal_receivable: 7500 },
-  credits: { principal: 7500 },
-)
-
-Txn.create(
-  name: "Initiate Payment",
-  product_uuid: 2,
-  date: Date.new(2015, 5, 1),
-  debits: { pending_payments: 7500 },
-  credits: { principal_receivable: 7500 },
-)
-
-Txn.create(
-  name: "Process Payment",
-  product_uuid: 2,
-  date: Date.new(2015, 5, 3),
-  debits: { cash: 7500 },
-  credits: { pending_payments: 7500 },
-)
+Event.named(:book_installment).trigger(amount_cents: 7500, date: Date.new(2015, 5, 1), product_uuid: 2)
+Event.named(:initiate_payment).trigger(amount_cents: 7500, date: Date.new(2015, 5, 1), product_uuid: 2)
+Event.named(:process_payment).trigger(amount_cents: 7500, date: Date.new(2015, 5, 3), product_uuid: 2)
 
 ###################################################
 # EXAMPLE LOAN 3: Pmt Plan, DO NOT apply to future, miss payments
@@ -179,45 +132,11 @@ t = Txn.create(
 
 t.reversals.create(name: "Start Payment Plan")
 
-Txn.create(
-  name: "Process Payment",
-  product_uuid: 3,
-  date: Date.new(2015, 1, 15),
-  debits: { cash: 15000 },
-  credits: { principal_receivable: 15000 },
-)
-
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 3,
-  date: Date.new(2015, 2, 1),
-  debits: { principal_receivable: 7500 },
-  credits: { principal: 7500 },
-)
-
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 3,
-  date: Date.new(2015, 3, 1),
-  debits: { principal_receivable: 7500 },
-  credits: { principal: 7500 },
-)
-
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 3,
-  date: Date.new(2015, 4, 1),
-  debits: { principal_receivable: 7500 },
-  credits: { principal: 7500 },
-)
-
-Txn.create(
-  name: "Book Installment",
-  product_uuid: 3,
-  date: Date.new(2015, 5, 1),
-  debits: { principal_receivable: 2500 },
-  credits: { principal: 2500 },
-)
+Event.named(:process_payment).trigger(amount_cents: 15000, date: Date.new(2015, 1, 15), product_uuid: 3)
+Event.named(:book_installment).trigger(amount_cents: 7500, date: Date.new(2015, 2, 1), product_uuid: 3)
+Event.named(:book_installment).trigger(amount_cents: 7500, date: Date.new(2015, 3, 1), product_uuid: 3)
+Event.named(:book_installment).trigger(amount_cents: 7500, date: Date.new(2015, 4, 1), product_uuid: 3)
+Event.named(:book_installment).trigger(amount_cents: 2500, date: Date.new(2015, 5, 1), product_uuid: 3)
 
 ###################################################
 # EXAMPLE LOAN 4: Pmt 1, Pmt 2, Pmt 1 Returns
@@ -226,13 +145,7 @@ puts "Example Loan 4"
 Event.named(:issue_loan).trigger(amount_cents: 200000, date: Date.new(2014, 12, 1), product_uuid: 4)
 
 (Date.new(2014, 12, 2)..Date.new(2015, 1, 1)).each do |date|
-  Txn.create(
-    name: "Book Interest",
-    product_uuid: 4,
-    date: date,
-    debits: { accrued_interest: 50 },
-    credits: { interest_income: 50 },
-  )
+  Event.named(:book_interest).trigger(amount_cents: 50, date: date, product_uuid: 4)
 end
 
 inst_1 = Txn.create(
@@ -265,13 +178,7 @@ initiate_pmt_1 = Txn.create(
 
 # Book less interest now that principal is in "pending" account
 (Date.new(2015, 1, 2)..Date.new(2015, 1, 3)).each do |date|
-  Txn.create(
-    name: "Book Interest",
-    product_uuid: 4,
-    date: date,
-    debits: { accrued_interest: 40 },
-    credits: { interest_income: 40 },
-  )
+  Event.named(:book_interest).trigger(amount_cents: 40, date: date, product_uuid: 4)
 end
 
 process_pmt_1 = Txn.create(
@@ -285,13 +192,7 @@ process_pmt_1 = Txn.create(
 )
 
 (Date.new(2015, 1, 4)..Date.new(2015, 1, 5)).each do |date|
-  Txn.create(
-    name: "Book Interest",
-    product_uuid: 4,
-    date: date,
-    debits: { accrued_interest: 40 },
-    credits: { interest_income: 40 },
-  )
+  Event.named(:book_interest).trigger(amount_cents: 40, date: date, product_uuid: 4)
 end
 
 initiate_pmt_2 = Txn.create(
@@ -323,13 +224,7 @@ process_pmt_1.reversals.create(name: "Payment Return")
 
 # Adjust interest booked for higher principal balance
 (Date.new(2015, 1, 2)..Date.new(2015, 1, 5)).each do |date|
-  Txn.create(
-    name: "Book Interest",
-    product_uuid: 4,
-    date: date,
-    debits: { accrued_interest: 10 },
-    credits: { interest_income: 10 },
-  )
+  Event.named(:book_interest).trigger(amount_cents: 10, date: date, product_uuid: 4)
 end
 
 # Adjust payment 2 breakdown
