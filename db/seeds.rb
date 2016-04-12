@@ -32,7 +32,7 @@ event = Event.create(name: :initiate_payment)
 action = Action::CreateWaterfallTxn.create(event: event, name: :create_txn)
 action.waterfalls.create(credit_account: Account.accrued_interest, debit_account: Account.pending_payments, order: 0, from_account: Account.accrued_interest)
 action.waterfalls.create(credit_account: Account.interest_receivable, debit_account: Account.pending_payments, order: 1, from_account: Account.interest_receivable)
-action.waterfalls.create(credit_account: Account.principal_receivable, debit_account: Account.pending_payments, order: 1, from_account: Account.principal_receivable)
+action.waterfalls.create(credit_account: Account.principal_receivable, debit_account: Account.pending_payments, order: 2, from_account: Account.principal_receivable)
 
 event = Event.create(name: :process_payment)
 action = Action::CreateWaterfallTxn.create(event: event, name: :create_txn)
