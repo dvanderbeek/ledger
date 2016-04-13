@@ -1,0 +1,7 @@
+%h5= event.name
+%ul
+  - event.actions.each do |action|
+    %li= action.type.demodulize
+
+    %ul
+      = render action, action: action

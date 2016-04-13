@@ -1,6 +1,7 @@
 = navbar "Ledger", page_path("home"), container_mode: :with, class: "navbar-default navbar-static-top no-margin" do
   = nav_list do
     = nav_item 'Chart of Accounts', Account, nav_id: [:accounts, :main]
+    = nav_item 'Events', Event, nav_id: [:events, :main]
     / = nav_item 'UI Kit', leather.ui_kit_path
     / = nav_item 'Components', leather.components_path
     / = dropdown_nav_item 'Layouts', '#' do
