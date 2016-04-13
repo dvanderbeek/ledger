@@ -8,7 +8,7 @@ class ProductBalance < ActiveRecord::Base
   scope :positive, -> { where('amount_cents > ?', 0) }
 
   def self.by_account
-    each_with_object({}) do |product_balance, hsh|
+    all.each_with_object({}) do |product_balance, hsh|
       hsh[product_balance.account_id] = product_balance.amount_cents
     end
   end
