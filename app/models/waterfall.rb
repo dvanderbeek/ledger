@@ -20,6 +20,10 @@ class Waterfall < ActiveRecord::Base
     return amount_to_allocate
   end
 
+  def to_account
+    from_account_id == credit_account_id ? debit_account : credit_account
+  end
+
   private
 
   def amount_to_allocate

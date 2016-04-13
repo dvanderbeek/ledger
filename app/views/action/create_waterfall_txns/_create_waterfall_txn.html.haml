@@ -1,2 +1,2 @@
 - action.waterfalls.each do |waterfall|
-  %li Debit: #{waterfall.debit_account.name}, Credit: #{waterfall.credit_account.name} (decrease #{waterfall.from_account.name})
+  %li #{waterfall.from_account.name} >> #{waterfall.to_account.name}
