@@ -4,7 +4,11 @@
       %span{style: "padding-left: #{15 * account.ancestry_depth}px;"}
         = account.name.titleize
     %td= account.type.demodulize
-    %td= number_to_currency (params[:product].present? ? account.balance(for_product: params[:product]) : account.balance_cents) / 100
+    %td
+      - if params[:product].present?
+        = number_to_currency (@product_balances[account] || 0) / 100
+      - else
+        = number_to_currency account.balance_cents / 100
     %td= link_to 'Edit', edit_account_path(account)
     %td= link_to 'Destroy', account_path(account), :method => :delete, :data => { :confirm => 'Are you sure?' }
   = render 'table', accounts: children if children.present?

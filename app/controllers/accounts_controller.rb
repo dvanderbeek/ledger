@@ -5,6 +5,7 @@ class AccountsController < ApplicationController
   # GET /accounts
   def index
     @accounts = Account.includes(:entries).arrange(order: 'type, name')
+    @product_balances = ProductBalance.for_product(params[:product]).by_account if params[:product].present?
   end
 
   # GET /accounts/1
