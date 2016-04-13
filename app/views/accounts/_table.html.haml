@@ -6,7 +6,7 @@
     %td= account.type.demodulize
     %td
       - if params[:product].present?
-        = number_to_currency (@product_balances[account] || 0) / 100
+        = number_to_currency (@product_balances[account.id] || 0) / 100
       - else
         = number_to_currency account.balance_cents / 100
     %td= link_to 'Edit', edit_account_path(account)
