@@ -26,3 +26,17 @@
         %th Actions
     %tbody
       = render Account.accounts_receivable.product_balances.by_product.positive
+
+  %h4 Events & Actions
+  - Event.all.includes(:actions).each do |event|
+    %h5= event.name
+    %ul
+      - event.actions.each do |action|
+        %li= action.type.demodulize
+
+        %ul
+          - if action.is_a?(Action::CreateTxn)
+            Debit: #{action.debit_account.name}, Credit: #{action.credit_account.name}
+          - else
+            - action.waterfalls.each do |waterfall|
+              %li Debit: #{waterfall.debit_account.name}, Credit: #{waterfall.credit_account.name} (decrease #{waterfall.from_account.name})
