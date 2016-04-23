@@ -17,6 +17,10 @@ Account::Equity.create([
   { name: :equity },
 ])
 
+Account::Liability.create([
+  { name: :payment_returns },
+])
+
 event = Event.create(name: :issue_loan)
 action = Action::CreateTxn.create(event: event, name: :create_txn, credit_account: Account.cash, debit_account: Account.principal)
 
@@ -222,7 +226,18 @@ process_pmt_2 = Txn.create(
 
 # Payment 1 Returns
 initiate_pmt_1.reversals.create(name: "Payment Return")
-process_pmt_1.reversals.create(name: "Payment Return")
+process_pmt_1.adjustments.create(
+  name: "Payment Return",
+  debits: { pending_payments: 2000 },
+  credits: { payment_returns: 2000 },
+)
+process_pmt_1.adjustments.create(
+  name: "Payment Return",
+  date: Date.new(2015, 1, 4),
+  debits: { payment_returns: 2000 },
+  credits: { cash: 2000 },
+)
+# process_pmt_1.reversals.create(name: "Payment Return")
 
 # Adjust interest booked for higher principal balance
 (Date.new(2015, 1, 2)..Date.new(2015, 1, 5)).each do |date|
