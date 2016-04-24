@@ -1,0 +1,5 @@
+.nav-menu .nav-menu-nav li a:focus {
+  background: $navbar-inverse-bg;
+  outline: none;
+  @include box-shadow(none);
+}

@@ -1,29 +1,35 @@
-.container
-  %h1 Chart of Accounts
+#main
+  .scroll-panel
+    .scroll-panel-header
+      = link_to "#", class: "btn btn-default btn-sm pull-left visible-xs", data: { toggle: "off-canvas", target: "#target" } do
+        %i.fa.fa-bars
+      = link_to [:new, :account], class: "btn btn-primary btn-sm pull-right" do
+        %i.fa.fa-plus
+        New
+      %h3.scroll-panel-title Chart of Accounts
+    .scroll-panel-body
 
-  %table.table
-    %thead
-      %tr
-        %th Name
-        %th Type
-        %th Balance
-        %th
-        %th
+      %table.table
+        %thead
+          %tr
+            %th Name
+            %th Type
+            %th Balance
+            %th
+            %th
 
-    %tbody
-      = render 'table', accounts: @accounts
+        %tbody
+          = render 'table', accounts: @accounts
 
-  .well
-    Cash + Principal + Principal Receivable + Accrued Interest = Equity + Interest Income (retained earnings)
+      .well
+        Cash + Principal + Principal Receivable + Accrued Interest = Equity + Interest Income (retained earnings)
 
-  = link_to 'New Account', [:new, :account], class: 'btn btn-success'
-
-  %h4 Accounts Receivable by Product
-  %table.table
-    %thead
-      %tr
-        %th Product UUID
-        %th Accounts Receivable Balance
-        %th Actions
-    %tbody
-      = render Account.accounts_receivable.product_balances.by_product.positive
+      %h4 Accounts Receivable by Product
+      %table.table
+        %thead
+          %tr
+            %th Product UUID
+            %th Accounts Receivable Balance
+            %th Actions
+        %tbody
+          = render Account.accounts_receivable.product_balances.by_product.positive
