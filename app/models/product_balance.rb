@@ -12,4 +12,21 @@ class ProductBalance < ActiveRecord::Base
       hsh[product_balance.account_id] = product_balance.amount_cents
     end
   end
+
+  def self.time_series(date_range = 1.month.ago.to_date..Date.current.to_date)
+    by_date = by_date(date_range)
+    date_range.each_with_object({}) do |date, hash|
+      hash[date] = by_date[date] || hash[date - 1] || starting_balance(as_of: date_range.first)
+    end
+  end
+
+  def self.by_date(date_range)
+    where(date: date_range).each_with_object({}) do |balance, hash|
+      hash[balance.date] = balance.amount_cents
+    end
+  end
+
+  def self.starting_balance(as_of: Date.current)
+    where('date < ?', as_of).order(date: :asc).last.try(:amount_cents) || 0
+  end
 end

@@ -39,4 +39,5 @@
       %h4
         Daily Balance
         %small Accounts Receivable for Product 4 (in cents)
-      = debug Account.daily_balance(:accounts_receivable, for_product: 4, date_range: Date.new(2014, 12, 25)..Date.new(2015, 1, 15))
+      / = debug Account.daily_balance(:accounts_receivable, for_product: 4, date_range: Date.new(2014, 12, 25)..Date.new(2015, 1, 15))
+      = debug ProductBalance.for_product(4).where(account: Account.accounts_receivable).time_series(Date.new(2014, 12, 25)..Date.new(2015, 1, 15))
