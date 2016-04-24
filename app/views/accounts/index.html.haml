@@ -24,7 +24,9 @@
       .well
         Cash + Principal + Principal Receivable + Accrued Interest = Equity + Interest Income (retained earnings)
 
-      %h4 Accounts Receivable by Product
+      %h4
+        Late Accounts
+        %small Accounts Receivable by Product
       %table.table
         %thead
           %tr
@@ -33,3 +35,8 @@
             %th Actions
         %tbody
           = render Account.accounts_receivable.product_balances.by_product.positive
+
+      %h4
+        Daily Balance
+        %small Accounts Receivable for Product 4 (in cents)
+      = debug Account.daily_balance(:accounts_receivable, for_product: 4, date_range: Date.new(2014, 12, 25)..Date.new(2015, 1, 15))
