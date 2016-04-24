@@ -1,2 +1,8 @@
-.container
-  %h1 Home
+= content_for :navigation do
+  = navbar 'Ledger', root_url, container_mode: :with, class: 'navbar-inverse navbar-fixed-top' do
+    = nav_list class: 'navbar-right' do
+      = nav_item 'Sign In', Account, nav_id: [:accounts, :main]
+
+%section.cta
+  .container
+    %h1 Home

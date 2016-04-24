@@ -10,5 +10,5 @@
       - else
         = number_to_currency account.balance_cents / 100
     %td= link_to 'Edit', edit_account_path(account)
-    %td= link_to 'Destroy', account_path(account), :method => :delete, :data => { :confirm => 'Are you sure?' }
+    %td= link_to 'Delete', account_path(account), :method => :delete, :data => { :confirm => 'Are you sure?' }
   = render 'table', accounts: children if children.present?

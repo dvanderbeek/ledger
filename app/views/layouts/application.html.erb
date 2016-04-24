@@ -9,7 +9,7 @@
   <%= csrf_meta_tags %>
 </head>
 <body class="<%= body_class %>">
-  <%= render 'navigation' -%>
+  <%= content_for?(:navigation) ? yield(:navigation) : render('navigation') -%>
   <%= render 'flashes' -%>
   <div id="main">
     <%= yield %>
