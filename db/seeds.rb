@@ -45,6 +45,9 @@ action.waterfalls.create(credit_account: Account.interest_receivable, debit_acco
 action.waterfalls.create(credit_account: Account.accrued_interest, debit_account: Account.cash, order: 2, from_account: Account.accrued_interest)
 action.waterfalls.create(credit_account: Account.principal_receivable, debit_account: Account.cash, order: 3, from_account: Account.principal_receivable)
 
+event = Event.create(name: :full_schedule_change)
+action = Action::CreatePaymentSchedule.create(event: event, name: :create_payment_schedule)
+
 Txn.create(
   name: "Initial Funding",
   date: Date.new(2014, 1, 1),
