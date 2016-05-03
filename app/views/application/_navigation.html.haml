@@ -1,6 +1,11 @@
-%nav.nav-menu.nav-menu-inverse.nav-menu-fixed-left.off-canvas.off-canvas-left-xs#target
-  .nav-menu-header
-    = link_to 'Ledger', main_app.root_url, class: 'nav-menu-brand'
+= navbar "Avant Servicing", root_url, container_mode: :fluid, class: "navbar-static-top navbar-inverse" do
+  = nav_list class: "navbar-right" do
+    = nav_item icon('search'), "#"
+    = nav_item icon('inbox'), "#"
+
+%nav.nav-menu.nav-menu-default.nav-menu-fixed-left.off-canvas.off-canvas-left-xs#target
+  / .nav-menu-header
+  /   = link_to 'LS 2.0', main_app.root_url, class: 'nav-menu-brand'
   %ul.nav.nav-menu-nav
     = nav_item 'Chart of Accounts', Account, nav_id: [:accounts, :main]
     = nav_item 'Events', Event, nav_id: [:events, :main]
