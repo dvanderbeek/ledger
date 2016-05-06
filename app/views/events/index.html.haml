@@ -1,8 +1,9 @@
-#main
-  .scroll-panel
-    .scroll-panel-header
-      = link_to "#", class: "btn btn-default btn-sm pull-left visible-xs", data: { toggle: "off-canvas", target: "#target" } do
-        %i.fa.fa-bars
-      %h3.scroll-panel-title Events
-    .scroll-panel-body
-      = render @events
+.scroll-panel
+  .scroll-panel-body
+
+    .panel.panel-default
+      .panel-heading
+        %h4.panel-title
+          Events
+      .panel-body
+        = render @events

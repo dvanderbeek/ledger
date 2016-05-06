@@ -3,3 +3,7 @@
   outline: none;
   @include box-shadow(none);
 }
+
+.navbar, .nav-menu {
+  @include box-shadow(0 0 5px #ccc);
+}
