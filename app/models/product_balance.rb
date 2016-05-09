@@ -27,6 +27,10 @@ class ProductBalance < ActiveRecord::Base
   end
 
   def self.starting_balance(as_of: Date.current)
-    where('date < ?', as_of).order(date: :asc).last.try(:amount_cents) || 0
+    previous(as_of: as_of).amount_cents
+  end
+
+  def self.previous(as_of: Date.current)
+    where('date < ?', as_of).order(date: :asc).last || OpenStruct.new(amount_cents: 0)
   end
 end
